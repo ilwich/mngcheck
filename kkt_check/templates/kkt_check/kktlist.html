@@ -1,0 +1,17 @@
+{% extends "kkt_check/base.html" %}
+{% block page_header %}
+<h1>Список касс</h1>
+{% endblock page_header %}
+{% block content %}
+  <ul>
+    {% for kkt in kkt_list %}
+     <h3>
+      <a href="{% url 'kkt_check:kkt' kkt.id %}">{{ kkt }}</a>
+     </h3>
+
+    {% empty %}
+      <li><h3>Кассы ещё не добавлены.</h3></li>
+    {% endfor %}
+  </ul>
+<h3> <a href="{% url 'kkt_check:new_kkt' %}"> + Добавить кассу  </a></h3>
+{% endblock content %}

@@ -1,0 +1,26 @@
+{% extends 'kkt_check/base.html' %}
+{% block page_header %}
+<h3>Касса: {{ kkt }}
+   <small><a href="{% url 'kkt_check:edit_kkt' kkt.id %}">Редактировать кассу</a></small>
+</h3>
+{% endblock page_header %}
+{% block content %}
+<h3>Чеки:
+  <small><a href="{% url 'kkt_check:new_check_kkt' kkt.id %}">Добавить чек</a></small>
+</h3>
+  <ul>
+    {% for check in kkt_checks %}
+      <div class="card mb-3">
+        <h4 class="card-header">
+          Создан {{ check.date_added|date:'M d, Y H:i' }} - {{ check }}
+          <small> <a href="{% url 'kkt_check:edit_check_kkt' check.id %}">Редактировать чек</a></small>
+          <div class="card-body">
+            Статус : {{ check.status|linebreaks }}
+          </div>
+        </h4>
+      </div>
+   {% empty %}
+      <li>Чеки по данной кассе отсутствуют</li>
+    {% endfor %}
+  </ul>
+{% endblock content %}

@@ -1,0 +1,10 @@
+{% extends "kkt_check/base.html" %}
+{% block page_header %}
+  <div class='jumbotron'>
+    <h1 class="display-3">На этом портале можно управлять кассами и печатью чеков через месседжеры</h1>
+    <p class="lead">Зарегистрируйтесь. Получите Токен для программы агента. Добавьте кассы. Создайте чеки на сайте или
+      с помощью телграмм бота.</p>
+    <a class="btn btn-lg btn-primary" href="{% url 'users:register' %}"
+    role="button">Регистрация &raquo;</a>
+  </div>
+{% endblock page_header %}

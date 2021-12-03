@@ -1,0 +1,22 @@
+{% extends "kkt_check/base.html" %}
+{% load bootstrap4 %}
+
+{% block page_header %}
+<h2><a href="{% url 'kkt_check:edit_check_kkt' check_kkt.id %}">Чек для кассы - {{ check_kkt }}</a><br>
+    <small> Редактирование информации о позиции чека: </small>
+</h2>
+{% endblock page_header %}
+{% block content %}
+    <form action="{% url 'kkt_check:edit_good_check_kkt' good_check_kkt.id %}" method='post'>
+        {% csrf_token %}
+        {% bootstrap_form form %}
+
+        {% if check_kkt.status == 'Добавлен' %}
+          {% buttons %}
+                <button name="submit" class="btn btn-primary">Сохранить изменения</button>
+          {% endbuttons %}
+        {% else %}
+          <h3><p> Редактирование запрещено статусом чека</p></h3>
+        {% endif %}
+    </form>
+{% endblock content %}
