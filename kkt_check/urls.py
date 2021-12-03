@@ -35,5 +35,4 @@ urlpatterns = [
     path('api/check_kkt/<int:fn_number>/<str:date_added>', views.GetCheckDetail.as_view()),
     # API получение токена авторизации
     path('api-token-auth/', obtain_auth_token),
-
     ]
