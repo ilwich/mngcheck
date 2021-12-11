@@ -45,8 +45,8 @@ if os.environ.get("IN_SERVER"):
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
             'NAME': "mngcheck_db",
-            'USER': 'django',
-            'PASSWORD': 'ahsae3aishau',
+            'USER': 'postgres',
+            'PASSWORD': '18c81927b71b221383ef7a4b43c77aa3',
             'HOST': "172.17.0.2",
             'PORT': '5432',
         }
