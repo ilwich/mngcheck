@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 import rest_framework.permissions
 
@@ -24,10 +24,33 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-8fz9)#1la2o+1rfr!jo1j*+skk(3zq4b_++xb@c!p%(zy*r$zo'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True if os.environ.get("NODEBUG") is None else False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["web", "127.0.0.1"] if os.environ.get("NODEBUG") is None else ["89.108.83.101"]
 
+if os.environ.get("IN_SERVER"):
+    # Stuff for when running in Docker-compose.
+
+    #CELERY_BROKER_URL = 'redis://redis:6379/1'
+    #CELERY_RESULT_BACKEND = 'redis://redis:6379/1'
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': "mngcheck_db",
+            'USER': 'django',
+            'PASSWORD': 'ahsae3aishau',
+            'HOST': "localhost",
+            'PORT': '',
+        }
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # Application definition
 
@@ -83,12 +106,7 @@ WSGI_APPLICATION = 'mngcheck.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+
 
 
 # Password validation
