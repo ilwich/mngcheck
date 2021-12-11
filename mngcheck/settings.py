@@ -43,12 +43,12 @@ if os.environ.get("IN_SERVER"):
 
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'ENGINE': 'django.db.backends.postgresql',
             'NAME': "mngcheck_db",
             'USER': 'django',
             'PASSWORD': 'ahsae3aishau',
-            'HOST': "localhost",
-            'PORT': '',
+            'HOST': "172.17.0.2",
+            'PORT': '5432',
         }
     }
 else:
