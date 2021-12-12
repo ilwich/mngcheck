@@ -19,8 +19,8 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 
 # Install Python requirements.
-COPY requirements/production.txt requirements/base.txt ./
-RUN pip install -r production.txt
+# COPY requirements/production.txt requirements/base.txt ./
+# RUN pip install -r production.txt
 
 # Copy application code.
 COPY . .
