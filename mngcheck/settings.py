@@ -34,7 +34,7 @@ SECRET_KEY = 'django-insecure-8fz9)#1la2o+1rfr!jo1j*+skk(3zq4b_++xb@c!p%(zy*r$zo
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if os.environ.get("NODEBUG") is None else False
 
-ALLOWED_HOSTS = ["web", "127.0.0.1"] if os.environ.get("NODEBUG") is None else ["178.21.8.107"]
+ALLOWED_HOSTS = ["web", "127.0.0.1"] if os.environ.get("NODEBUG") is None else ["178.21.8.107", "kassbot.website"]
 
 if os.environ.get("IN_SERVER"):
     # Stuff for when running in Docker-compose.
@@ -152,7 +152,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
-
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 STATIC_URL = '/static/'
 
 # Default primary key field type
