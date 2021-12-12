@@ -1,5 +1,5 @@
 # Please remember to rename django_dokku_docker to your project directory name
-FROM python:3.6-stretch
+FROM python:3.9-stretch
 
 # WORKDIR sets the working directory for docker instructions, please not use cd
 WORKDIR /mngcheck
@@ -8,7 +8,7 @@ EXPOSE 8000
 
 # sets the environment variable
 ENV PYTHONUNBUFFERED=1 \
-#    PYTHONPATH=/mngcheck \
+    PYTHONPATH=/mngcheck \
     DJANGO_SETTINGS_MODULE=config.settings.production \
     PORT=8000 \
     WEB_CONCURRENCY=3
