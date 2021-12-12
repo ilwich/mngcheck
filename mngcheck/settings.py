@@ -33,7 +33,7 @@ SECRET_KEY = 'django-insecure-8fz9)#1la2o+1rfr!jo1j*+skk(3zq4b_++xb@c!p%(zy*r$zo
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if os.environ.get("NODEBUG") is None else False
 
-ALLOWED_HOSTS = ["web", "127.0.0.1"] if os.environ.get("NODEBUG") is None else ["89.108.83.101"]
+ALLOWED_HOSTS = ["web", "127.0.0.1"] if os.environ.get("NODEBUG") is None else ["178.21.8.107"]
 
 if os.environ.get("IN_SERVER"):
     # Stuff for when running in Docker-compose.
