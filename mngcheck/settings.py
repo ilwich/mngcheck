@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
 from pathlib import Path
+import django_heroku
 import rest_framework.permissions
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -173,3 +174,6 @@ REST_FRAMEWORK = {
 
 # Мои настройки
 LOGIN_URL = '/users/login/'
+
+# Activate Django-Heroku.
+django_heroku.settings(locals())
