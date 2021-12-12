@@ -1,1 +1,2 @@
-web: gunicorn mngcheck.wsgi --log-file - check
+web: gunicorn config.wsgi:mngcheck
+release: python manage.py migrate --noinput
