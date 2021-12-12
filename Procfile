@@ -1,1 +1,2 @@
-web: gunicorn mngcheck.wsgi:application
+web: gunicorn mngcheck.wsgi
+release: python manage.py migrate
