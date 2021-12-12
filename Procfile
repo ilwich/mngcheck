@@ -1,1 +1,1 @@
-web: gunicorn config.wsgi:mngcheck
+web: gunicorn mngcheck.wsgi
