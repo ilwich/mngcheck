@@ -4,12 +4,4 @@
       "predeploy": "python manage.py collectstatic --noinput"
     }
   },
-  "formation": {
-    "web": {
-      "quantity": 1
-    },
-    "worker": {
-      "quantity": 1
-    }
-  }
 }
