@@ -28,8 +28,11 @@ STATICFILES_DIRS = [
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-8fz9)#1la2o+1rfr!jo1j*+skk(3zq4b_++xb@c!p%(zy*r$zo'
+# Секретный ключ джанго берем из окружения при запуске на сервере
+if os.environ.get("IN_SERVER"):
+    SECRET_KEY = os.environ.get("SECRET_KEY")
+else:
+    SECRET_KEY = 'django-insecure-8fz9)#1la2o+1rfr!jo1j*+skk(3zq4b_++xb@c!p%(zy*r$zo'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if os.environ.get("NODEBUG") is None else False
@@ -47,7 +50,7 @@ if os.environ.get("IN_SERVER"):
             'ENGINE': 'django.db.backends.postgresql',
             'NAME': "mngcheck_db",
             'USER': 'postgres',
-            'PASSWORD': '18c81927b71b221383ef7a4b43c77aa3',
+            'PASSWORD': '24e66d55acf7e0037817f460cfd5b107',
             'HOST': "172.17.0.2",
             'PORT': '5432',
         }
