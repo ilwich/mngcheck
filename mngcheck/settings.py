@@ -28,11 +28,13 @@ STATICFILES_DIRS = [
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
+
 # Секретный ключ джанго берем из окружения при запуске на сервере
 if os.environ.get("IN_SERVER"):
     SECRET_KEY = os.environ.get("SECRET_KEY")
 else:
     SECRET_KEY = 'django-insecure-8fz9)#1la2o+1rfr!jo1j*+skk(3zq4b_++xb@c!p%(zy*r$zo'
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if os.environ.get("NODEBUG") is None else False
@@ -69,6 +71,7 @@ INSTALLED_APPS = [
     # Мои приложения
     'kkt_check',
     'users',
+    'bot.apps.BotConfig',
     # Сторонние приложения
     'bootstrap4',
     'rest_framework',

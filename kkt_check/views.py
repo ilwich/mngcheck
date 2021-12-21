@@ -12,6 +12,9 @@ from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.http.response import JsonResponse
 from rest_framework import status
+import os
+
+
 
 
 class GetKktInfoView(APIView):
@@ -120,6 +123,8 @@ class GetCheckDetail((APIView)):
 
 def index(request):
     """Домашняя страница приложения kkt-check"""
+    BOT_TOKEN = os.environ.get("BOT_TOKEN")
+    ic(BOT_TOKEN)
     return render(request, 'kkt_check/index.html')
 
 

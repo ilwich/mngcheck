@@ -1,0 +1,23 @@
+{
+  "update_id": 696547242,
+  "message": {
+    "message_id": 1352,
+    "from": {
+      "id": 259059252,
+      "is_bot": false,
+      "first_name": "Илья",
+      "last_name": "Соколов",
+      "username": "V_element",
+      "language_code": "ru"
+    },
+    "chat": {
+      "id": 259059252,
+      "first_name": "Илья",
+      "last_name": "Соколов",
+      "username": "V_element",
+      "type": "private"
+    },
+    "date": 1639684773,
+    "text": "proverka"
+  }
+}

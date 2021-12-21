@@ -20,4 +20,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('kkt_check.urls')),
     path('users/', include('users.urls')),
+    path('bot/', include('bot.urls'))
 ]
