@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 # Create your models here.
 class Botuser(models.Model):
@@ -7,6 +8,10 @@ class Botuser(models.Model):
     bot_user_id = models.IntegerField(unique=True, primary_key=True)
     first_name = models.CharField(max_length=64)
     last_name = models.CharField(max_length=64)
+    bot_user_status = models.CharField(max_length=64, default='Авторизация')
+    user_token = models.CharField(max_length=64)
+    login_name = models.CharField(max_length=64)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.bot_user_id}'

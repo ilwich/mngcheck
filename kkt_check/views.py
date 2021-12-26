@@ -123,8 +123,6 @@ class GetCheckDetail((APIView)):
 
 def index(request):
     """Домашняя страница приложения kkt-check"""
-    BOT_TOKEN = os.environ.get("BOT_TOKEN")
-    ic(BOT_TOKEN)
     return render(request, 'kkt_check/index.html')
 
 
