@@ -13,7 +13,8 @@
       <div class="card mb-3">
         <h4 class="card-header">
           Создан {{ check.date_added|date:'M d, Y H:i' }} - {{ check }}
-          <small> <a href="{% url 'kkt_check:edit_check_kkt' check.id %}">Редактировать чек</a></small>
+          <small> <a href="{% url 'kkt_check:edit_check_kkt' check.id %}">Редактировать</a></small>
+          <small> <a href="{% url 'kkt_check:del_check_kkt' check.id %}">Удалить</a></small>
           <div class="card-body">
             Статус : {{ check.status|linebreaks }}
           </div>

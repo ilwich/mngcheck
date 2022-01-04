@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import get_object_or_404
 from .models import Kkt, Check_kkt, Check_good
+from bot.views import send_reply_telebot
 from .serializers import KktSerializer, CheckSerializer, GoodSerializer
 from .forms import KktForm, CheckForm, GoodForm
 from django.contrib.auth.decorators import login_required
@@ -14,6 +15,17 @@ from django.http.response import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 import os
+from re import findall
+
+
+def telegram_id_in_msg(str_in):
+    """Выдели teleramm id из сообщении"""
+    pattern = '(\d+$)'
+    res = findall(pattern, str_in)
+    if res:
+        return int(res[-1])
+    else:
+        return False
 
 
 
@@ -115,6 +127,11 @@ class GetCheckDetail((APIView)):
             serializer = CheckSerializer(instance=check, data=data, partial=True)
             if serializer.is_valid(raise_exception=True):
                 saved_check = serializer.save()
+                # Проверка на ответ в месседжер
+                if 'telegram' in saved_check.bot_message_id:  # если чек из телеграмм, то ответить по id пользователя
+                    update_id = telegram_id_in_msg(saved_check.bot_message_id)
+                    if update_id:
+                        send_reply_telebot(str(saved_check), update_id)
             return Response({
                 "success": "Check '{}' updated successfully".format(saved_check.date_added)
             })
@@ -138,7 +155,10 @@ def kktlist(request):
 @login_required
 def kkt(request, kkt_id):
     """Выводит одну кассу и все ее чеки."""
-    kkt = Kkt.objects.get(id=kkt_id)
+    try:
+        kkt = Kkt.objects.get(id=kkt_id)
+    except Kkt.DoesNotExist:
+        raise Http404
     # Проверка того, что ккт принадлежит текущему пользователю.
     if kkt.owner != request.user:
         raise Http404
@@ -169,7 +189,10 @@ def new_kkt(request):
 @login_required
 def edit_kkt(request, kkt_id):
     """Редактирует существующую кассу."""
-    kkt = Kkt.objects.get(id=kkt_id)
+    try:
+        kkt = Kkt.objects.get(id=kkt_id)
+    except Kkt.DoesNotExist:
+        raise Http404
     if kkt.owner != request.user:
         raise Http404
     if request.method != 'POST':
@@ -186,9 +209,25 @@ def edit_kkt(request, kkt_id):
 
 
 @login_required
+def del_kkt(request, kkt_id):
+    """Удаление существующей кассы."""
+    try:
+        kkt = Kkt.objects.get(id=kkt_id)
+    except Kkt.DoesNotExist:
+        raise Http404
+    if kkt.owner != request.user:
+        raise Http404
+    kkt.delete()
+    return redirect('kkt_check:kktlist')
+
+
+@login_required
 def new_check_kkt(request, kkt_id):
     """Добавляет новый чек по конкретной ккт."""
-    kkt = Kkt.objects.get(id=kkt_id)
+    try:
+        kkt = Kkt.objects.get(id=kkt_id)
+    except Kkt.DoesNotExist:
+        raise Http404
     if request.method != 'POST':
         # Данные не отправлялись; создается пустая форма.
         form = CheckForm()
@@ -208,8 +247,11 @@ def new_check_kkt(request, kkt_id):
 @login_required
 def edit_check_kkt(request, check_kkt_id):
     """Редактирует существующий чек."""
-    check_kkt = Check_kkt.objects.get(id=check_kkt_id)
-    kkt = check_kkt.kkt
+    try:
+        check_kkt = Check_kkt.objects.get(id=check_kkt_id)
+        kkt = check_kkt.kkt
+    except Check_kkt.DoesNotExist:
+        raise Http404
     kkt_check_goods_val = check_kkt.checkkktset.all().values()
     sum_cash_in_goods = sum((good['price'] * good['qty']) / 10000 for good in kkt_check_goods_val)
     if kkt.owner != request.user:
@@ -236,9 +278,26 @@ def edit_check_kkt(request, check_kkt_id):
 
 
 @login_required
+def del_check_kkt(request, check_kkt_id):
+    """Удаление чека в существующей кассе."""
+    try:
+        check_kkt = Check_kkt.objects.get(id=check_kkt_id)
+        kkt_id = check_kkt.kkt.id
+        if kkt.owner != request.user:
+            raise Http404
+        check_kkt.delete()
+        return redirect('kkt_check:kkt', kkt_id=kkt_id)
+    except Check_kkt.DoesNotExist:
+        raise Http404
+
+
+@login_required
 def new_good_check_kkt(request, check_kkt_id):
     """Добавляет новую позицию в конкретный чек"""
-    check_kkt = Check_kkt.objects.get(id=check_kkt_id)
+    try:
+        check_kkt = Check_kkt.objects.get(id=check_kkt_id)
+    except Check_kkt.DoesNotExist:
+        raise Http404
     if request.method != 'POST':
         # Данные не отправлялись; создается пустая форма.
         form = GoodForm(initial={'qty': 10000, 'tax_code': 6})
@@ -257,7 +316,10 @@ def new_good_check_kkt(request, check_kkt_id):
 @login_required
 def edit_good_check_kkt(request, good_check_kkt_id):
     """Редактирует позицию в существующем чеке."""
-    good_check_kkt = Check_good.objects.get(id=good_check_kkt_id)
+    try:
+        good_check_kkt = Check_good.objects.get(id=good_check_kkt_id)
+    except Check_good.DoesNotExist:
+        raise Http404
     check_kkt = good_check_kkt.check_kkt
     kkt = check_kkt.kkt
     if kkt.owner != request.user:
@@ -273,3 +335,17 @@ def edit_good_check_kkt(request, good_check_kkt_id):
             return redirect('kkt_check:edit_check_kkt', check_kkt_id=check_kkt.id)
     context = {'good_check_kkt': good_check_kkt, 'check_kkt': check_kkt, 'form': form}
     return render(request, 'kkt_check/edit_good_check_kkt.html', context)
+
+
+@login_required
+def del_good_check_kkt(request, good_check_kkt_id):
+    """Удаление позиции в существующем чеке."""
+    try:
+        good_check_kkt = Check_good.objects.get(id=good_check_kkt_id)
+        check_kkt_id = good_check_kkt.check_kkt.id
+        if kkt.owner != request.user:
+            raise Http404
+        good_check_kkt.delete()
+        return redirect('kkt_check:edit_check_kkt', check_kkt_id=check_kkt_id)
+    except Check_good.DoesNotExist:
+        raise Http404

@@ -15,6 +15,16 @@ TOKEN = os.environ.get("BOT_TOKEN")
 TelegramBot = Bot(TOKEN)
 
 
+def send_reply_telebot(msg, reply_to_update_id):
+    """Определение сообщения отправки ответа по botmessage_id"""
+    try:
+        bot_msg = Botmessage.objects.get(update_id=reply_to_update_id)
+    except Botmessage.DoesNotExist:
+        return False
+    markup_msgs = None
+    send_answer(bot_msg.sender, '\n'.join([msg, bot_msg.text]), markup_msgs)
+
+
 def send_answer(bot_user, msg, markup_msgs):
     """Отправка сообщения в телеграм пользователю bot model"""
     if markup_msgs != None:
@@ -29,7 +39,7 @@ def send_answer(bot_user, msg, markup_msgs):
 
 def bot_cancel_message(bot_user, msg_text):
     """Проверка ссобщения Отмена от пользователя"""
-    if msg_text in ['Отмена', 'отмена', 'выход', 'Выход']:  # Отмена
+    if msg_text.lower() in ['отмена', 'выход']:  # Отмена
         bot_user.bot_user_status = 'Авторизация'
         bot_user.save()
         return {"text": "Спасибо за работу. \n Авторизация. Введите логин:",
@@ -38,11 +48,31 @@ def bot_cancel_message(bot_user, msg_text):
         return False
 
 
+def bot_finish_message(bot_msg):
+    """Проверка ссобщения Регистрация чека"""
+    if bot_msg.text.strip().lower() in ['регистрация чека']:  # Завершение создания чека
+        bot_msg.text = bot_msg.sender.current_сheck.get_text_of_check() # Информацию чека сохраняем в текст сообщения
+        bot_msg.save()
+        bot_msg.sender.bot_user_status = 'Выбор'
+        bot_msg.sender.save()
+        bot_msg.sender.current_сheck.bot_message_id = f'telegram msg_id: {str(bot_msg.update_id)}' # Сохраняем id сообщения в чек
+        bot_msg.sender.current_сheck.status = 'Добавлен'
+        bot_msg.sender.current_сheck.save()
+        return {"text": "Пользователь авторизован.\nВыберете действие:",
+                "markup": ['Чек прихода', 'Отмена']}
+    else:
+        return False
+
+
 def msg_command_center(bot_msg):
     """Обработка нового сообщения от бота.Выполняем функцию по текущему статусу пользователя"""
-    res = bot_cancel_message(bot_msg.sender, bot_msg.text)  # Проверка команды Отмена
-    if res:
-        send_answer(bot_msg.sender, res['text'], res['markup'])
+    cancel_message = bot_cancel_message(bot_msg.sender, bot_msg.text)  # Проверка команды Отмена
+    finish_message = bot_finish_message(bot_msg) # Проверка сообщения Регистрировать чек
+    if cancel_message:
+        send_answer(bot_msg.sender, cancel_message['text'], cancel_message['markup'])
+        return True
+    elif finish_message:
+        send_answer(bot_msg.sender, finish_message['text'], finish_message['markup'])
         return True
     else:
         res_answer = user_command_status.get(bot_msg.sender.bot_user_status)(bot_msg.sender, bot_msg.text)

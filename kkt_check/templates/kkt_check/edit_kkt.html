@@ -4,7 +4,9 @@
 {% block page_header %}
 <h2><a href="{% url 'kkt_check:kkt' kkt.id %}"> {{ kkt }}</a> <br>
     <small> Редактирование информации о кассе: </small>
+    <a href="{% url 'kkt_check:del_kkt' kkt.id %}"> <small> Удалить </small> </a> <br>
 </h2>
+
 {% endblock page_header %}
 {% block content %}
 

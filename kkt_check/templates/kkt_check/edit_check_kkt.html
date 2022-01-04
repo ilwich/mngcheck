@@ -5,6 +5,9 @@
 <h2><a href="{% url 'kkt_check:kkt' kkt.id %}">{{ kkt }}</a> <br>
     <small> Редактирование информации чека: </small>
 </h2>
+{% if check_kkt.bot_message_id != '0' %}
+  <h3><p> Чек добавлен через сообщение {{ check_kkt.bot_message_id }}</p></h3>
+{% endif %}
 {% endblock page_header %}
 {% block content %}
     <form action="{% url 'kkt_check:edit_check_kkt' check_kkt.id %}" method='post'>
@@ -32,9 +35,10 @@
         <p>{{ check.product_type_code|linebreaks }}</p>
         <p>
           {% if check_kkt.status == 'Добавлен' %}
-            <a href="{% url 'kkt_check:edit_good_check_kkt' good.id %}">Редактировать позицию</a>
+            <a href="{% url 'kkt_check:edit_good_check_kkt' good.id %}">Редактировать</a>
+            <a href="{% url 'kkt_check:del_good_check_kkt' good.id %}">Удалить</a>
           {% else %}
-            <a href="{% url 'kkt_check:edit_good_check_kkt' good.id %}">Просмотр позиции</a>
+            <a href="{% url 'kkt_check:edit_good_check_kkt' good.id %}">Просмотр</a>
           {% endif %}
 
         </p>

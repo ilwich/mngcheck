@@ -17,14 +17,20 @@ urlpatterns = [
     path('new_kkt/', views.new_kkt, name='new_kkt'),
     # Страница для редактирования кассы
     path('edit_kkt/<int:kkt_id>/', views.edit_kkt, name='edit_kkt'),
+    # Удаление кассы
+    path('del_kkt/<int:kkt_id>/', views.del_kkt, name='del_kkt'),
     # Страница для добавления нового чека
     path('new_check_kkt/<int:kkt_id>/', views.new_check_kkt, name='new_check_kkt'),
     # Страница для редактирования чека
     path('edit_check_kkt/<int:check_kkt_id>/', views.edit_check_kkt, name='edit_check_kkt'),
+    # Удаление чека
+    path('del_check_kkt/<int:check_kkt_id>/', views.del_check_kkt, name='del_check_kkt'),
     # Страница для добавления нового товара в чек
     path('new_good_check_kkt/<int:check_kkt_id>/', views.new_good_check_kkt, name='new_good_check_kkt'),
     # Страница для редактирования товара в чеке
     path('edit_good_check_kkt/<int:good_check_kkt_id>/', views.edit_good_check_kkt, name='edit_good_check_kkt'),
+    # Удаление товара в чеке
+    path('del_good_check_kkt/<int:good_check_kkt_id>/', views.del_good_check_kkt, name='del_good_check_kkt'),
     # API список ККТ
     path('api/kkts/', views.GetKktInfoView.as_view()),
     # API просмотр и изменение ККТ по номеру ФН
