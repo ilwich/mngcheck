@@ -11,6 +11,7 @@ from .forms import KktForm, CheckForm, GoodForm
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.http.response import JsonResponse
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 import os
 

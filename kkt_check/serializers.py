@@ -1,7 +1,6 @@
 # Kkt_check/serializers.py
 from rest_framework import serializers
-from icecream import ic
-from .models import Kkt, Check_kkt
+
 
 class KktSerializer(serializers.Serializer):
     inn_kkt = serializers.CharField(max_length=12)

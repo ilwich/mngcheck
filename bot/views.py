@@ -7,6 +7,7 @@ import json
 from django.views.decorators.csrf import csrf_exempt
 
 from telepot import Bot
+from telepot.namedtuple import ReplyKeyboardMarkup, KeyboardButton
 from bot.botcommand import user_command_status
 import os
 
@@ -14,18 +15,43 @@ TOKEN = os.environ.get("BOT_TOKEN")
 TelegramBot = Bot(TOKEN)
 
 
-
-def send_answer(bot_user, msg):
+def send_answer(bot_user, msg, markup_msgs):
     """Отправка сообщения в телеграм пользователю bot model"""
-    TelegramBot.sendMessage(bot_user.bot_user_id, msg)
+    if markup_msgs != None:
+        n = 2  # Разбиваем кнопки на количество столбиков n
+        keyboard = [markup_msgs[i:i+n] for i in range(0, len(markup_msgs), n)]
+        markup = ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True)
+        TelegramBot.sendMessage(bot_user.bot_user_id, msg, reply_markup=markup)
+    else:
+        TelegramBot.sendMessage(bot_user.bot_user_id, msg)
     return True
+
+
+def bot_cancel_message(bot_user, msg_text):
+    """Проверка ссобщения Отмена от пользователя"""
+    if msg_text in ['Отмена', 'отмена', 'выход', 'Выход']:  # Отмена
+        bot_user.bot_user_status = 'Авторизация'
+        bot_user.save()
+        return {"text": "Спасибо за работу. \n Авторизация. Введите логин:",
+                "markup": ['Отмена']}
+    else:
+        return False
+
 
 def msg_command_center(bot_msg):
-    """Обработка нового сообщения от бота"""
-    #Выполняем функцию по текущему статусу пользователя
-    res_answer = user_command_status.get(bot_msg.sender.bot_user_status)(bot_msg.sender, bot_msg.text)
-    send_answer(bot_msg.sender, res_answer)
-    return True
+    """Обработка нового сообщения от бота.Выполняем функцию по текущему статусу пользователя"""
+    res = bot_cancel_message(bot_msg.sender, bot_msg.text)  # Проверка команды Отмена
+    if res:
+        send_answer(bot_msg.sender, res['text'], res['markup'])
+        return True
+    else:
+        res_answer = user_command_status.get(bot_msg.sender.bot_user_status)(bot_msg.sender, bot_msg.text)
+        try:
+            send_answer(bot_msg.sender, res_answer['text'], res_answer['markup'])
+            return True
+        except ValueError:
+            return "Message error"
+
 
 @csrf_exempt
 def talkin_to_me_bruh(request):
@@ -47,24 +73,24 @@ def talkin_to_me_bruh(request):
         """Добавление сообщения в базу сообщений сообщений бота"""
         try:
             sender_id = json_dict['message']['from'].get('id')
-            sender_object = Botuser.objects.filter(bot_user_id__exact=sender_id).get()
             update_id = json_dict.get('update_id')
+            sender_is_bot = None if json_dict['message']['from'].get('is_bot') is True else False
             message_text = json_dict['message'].get('text')
             message_date = json_dict['message'].get('date')
         except KeyError:
             return None
-        if None in (sender_id, update_id, message_text, message_date):
+        if None in (sender_id, sender_is_bot, update_id, message_text, message_date):
             return None
 
         if _update_id_exists(update_id):
             return True
 
-        if _is_user_registered(sender_id):  #Проверка что id пользователя в базе
+        if _is_user_registered(sender_id):  # Проверка что id пользователя в базе
             try:
                 new_bot_msg = Botmessage(
                     update_id=int(update_id),
                     text=str(message_text),
-                    sender=sender_object,
+                    sender=Botuser.objects.filter(bot_user_id__exact=sender_id).get(),
                     date=datetime.fromtimestamp(int(message_date)),
                 )
                 new_bot_msg.save()
@@ -73,14 +99,27 @@ def talkin_to_me_bruh(request):
             except (KeyError, ValueError):
                 return None
         else:
-            raise ValueError('Sender is rejected')
+            try:
+                if str(message_text) == "/start":  # добавление нового пользователя по команде страрт
+                    new_bot_user = Botuser(
+                        bot_user_id=int(sender_id),
+                        first_name=str(json_dict['message']['from'].get('first_name')),
+                        last_name=str(json_dict['message']['from'].get('last_name')),
 
-    #перевод в json
+                    )
+                    new_bot_user.save()
+                    send_answer(new_bot_user, new_bot_user.bot_user_status)
+                return True
+            except (KeyError, ValueError):
+                return None
+
+
+    # перевод в json
     try:
         json_message = json.loads(request.body)
     except json.decoder.JSONDecodeError as err:
         return HttpResponse(str(err))
-    #добавление в базу сообщений
+    # добавление в базу сообщений
     try:
         result = _add_message_to_db(json_message)
     except ValueError as e:
