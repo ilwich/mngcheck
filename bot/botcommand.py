@@ -370,6 +370,12 @@ def buyer_name(bot_user, msg_text):
         bot_user.save()
         return {"text": "Введите название покупателя и ИНН (10 или 12 цифр)",
                 "markup": ['Пропустить']}
+    elif msg_text.strip() == 'Пропустить':
+        # Переход на ввод адреса получателя чека
+        bot_user.bot_user_status = 'Ввод адреса покупателя'
+        bot_user.save()
+        return {"text": "Введите e-mail адрес отправки электронного чека",
+                "markup": ['Пропустить']}
     return {"text": 'Выберите название покупателя или добавтье нового.',
             "markup": None}
 
@@ -437,7 +443,8 @@ def tax_system(bot_user, msg_text):
 def finish_check(bot_user, msg_text):
     """Подтверждение чека перед регистрацией на сервере"""
     if msg_text.strip() == 'Аннулировать чек':
-        bot_user.current_сheck.delete()
+        bot_user.current_сheck.status = 'Аннулирован'
+        bot_user.current_сheck.save()
         # Возврат на этап выбора действий пользователя
         bot_user.bot_user_status = 'Выбор'
         bot_user.save()
