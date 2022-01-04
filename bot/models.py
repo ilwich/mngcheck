@@ -10,7 +10,7 @@ class Botuser(models.Model):
     first_name = models.CharField(max_length=64)
     last_name = models.CharField(max_length=64)
     bot_user_status = models.CharField(max_length=64, default='Авторизация')
-    user_token = models.CharField(max_length=64)
+    user_token = models.CharField(max_length=64, default='1')
     login_name = models.CharField(max_length=64)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, default=3)
     # Текущий чек для пользователя телеграмм

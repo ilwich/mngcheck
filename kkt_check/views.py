@@ -283,7 +283,7 @@ def del_check_kkt(request, check_kkt_id):
     try:
         check_kkt = Check_kkt.objects.get(id=check_kkt_id)
         kkt_id = check_kkt.kkt.id
-        if kkt.owner != request.user:
+        if check_kkt.kkt.owner != request.user:
             raise Http404
         check_kkt.delete()
         return redirect('kkt_check:kkt', kkt_id=kkt_id)
@@ -343,7 +343,7 @@ def del_good_check_kkt(request, good_check_kkt_id):
     try:
         good_check_kkt = Check_good.objects.get(id=good_check_kkt_id)
         check_kkt_id = good_check_kkt.check_kkt.id
-        if kkt.owner != request.user:
+        if good_check_kkt.check_kkt.kkt.owner != request.user:
             raise Http404
         good_check_kkt.delete()
         return redirect('kkt_check:edit_check_kkt', check_kkt_id=check_kkt_id)

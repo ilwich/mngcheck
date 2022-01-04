@@ -45,7 +45,7 @@ class Check_kkt(models.Model):
     cash = models.IntegerField()
     ecash = models.IntegerField()
     date_added = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=10, default='Добавлен')
+    status = models.CharField(max_length=60, default='Добавлен')
     bot_message_id = models.CharField(max_length=40, default='0')
 
     class Meta:
