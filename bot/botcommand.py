@@ -163,6 +163,12 @@ def bot_check_kkt(bot_user, msg_text):
 
 def goods_name(bot_user, msg_text):
     """Определение названия номенклатуры в чек"""
+    if msg_text.strip() == 'Добавить новую':
+        # перходим на следующий шаг бот-пользователя
+        bot_user.bot_user_status = 'Новая номенклатура'
+        bot_user.save()
+        return {"text": 'Введите новое наименование номенклатуры.',
+                "markup": ['Отмена']}
     new_check_goods = Check_good(
             check_kkt=bot_user.current_сheck,
             product_name=msg_text.strip(),
@@ -455,6 +461,7 @@ user_command_status = {
     'Выбор': bot_menu,
     'Выбор кассы': bot_check_kkt,
     'Выбор номенклатуры': goods_name,
+    'Новая номенклатура': goods_name,
     'Количество номенклатуры': goods_qty,
     'Выбор ставки налога': goods_tax_code,
     'Ввод цены номенклатуры': goods_price,
