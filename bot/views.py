@@ -138,7 +138,7 @@ def talkin_to_me_bruh(request):
 
                     )
                     new_bot_user.save()
-                    send_answer(new_bot_user, new_bot_user.bot_user_status)
+                    send_answer(new_bot_user, new_bot_user.bot_user_status, None)
                 return True
             except (KeyError, ValueError):
                 return None
