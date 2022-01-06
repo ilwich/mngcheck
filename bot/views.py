@@ -1,9 +1,11 @@
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import redirect
+from django.conf import settings
 from bot.models import Botuser, Botmessage
 from datetime import datetime
 from icecream import ic
 import json
+import qrcode
 from django.views.decorators.csrf import csrf_exempt
 
 from telepot import Bot
@@ -13,6 +15,25 @@ import os
 
 TOKEN = os.environ.get("BOT_TOKEN")
 TelegramBot = Bot(TOKEN)
+
+
+def send_qr_check_telebot(data, reply_to_update_id):
+    """Отправка файла картинки с QR на сообщение"""
+    try:
+        bot_msg = Botmessage.objects.get(update_id=reply_to_update_id)
+    except Botmessage.DoesNotExist:
+        return False
+    filename = f"qr_check{data[2:15]}.png"
+    full_path_to_qr_file = os.path.join(settings.STATICFILES_DIRS[0], filename)
+    # генерируем qr-код
+    img = qrcode.make(data)
+    # сохраняем img в файл
+    img.save(full_path_to_qr_file)
+    try:
+        TelegramBot.sendPhoto(bot_msg.sender.bot_user_id, open(full_path_to_qr_file, 'rb'))
+        os.remove(full_path_to_qr_file)
+    except IOError:
+        return False
 
 
 def send_reply_telebot(msg, reply_to_update_id):

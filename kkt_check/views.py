@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import get_object_or_404
 from .models import Kkt, Check_kkt, Check_good
-from bot.views import send_reply_telebot
+from bot.views import send_reply_telebot, send_qr_check_telebot
 from .serializers import KktSerializer, CheckSerializer, GoodSerializer
 from .forms import KktForm, CheckForm, GoodForm
 from django.contrib.auth.decorators import login_required
@@ -125,6 +125,7 @@ class GetCheckDetail((APIView)):
         data = request.data.get('check')
         for check in kkt_check:
             serializer = CheckSerializer(instance=check, data=data, partial=True)
+            serializer.is_valid()
             if serializer.is_valid(raise_exception=True):
                 saved_check = serializer.save()
                 # Проверка на ответ в месседжер
@@ -132,8 +133,9 @@ class GetCheckDetail((APIView)):
                     update_id = telegram_id_in_msg(saved_check.bot_message_id)
                     if update_id:
                         send_reply_telebot(str(saved_check), update_id)
+                        send_qr_check_telebot(saved_check.status, update_id)
             return Response({
-                "success": "Check '{}' updated successfully".format(saved_check.date_added)
+                "success": f"Check '{saved_check.date_added}' updated successfully"
             })
 
 

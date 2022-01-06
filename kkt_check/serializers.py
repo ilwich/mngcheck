@@ -5,8 +5,8 @@ from rest_framework import serializers
 class KktSerializer(serializers.Serializer):
     inn_kkt = serializers.CharField(max_length=12)
     fn_number = serializers.CharField(max_length=16)
-    cashier_name = serializers.CharField(max_length=50)
-    cashier_inn = serializers.CharField(max_length=12)
+    cashier_name = serializers.CharField(max_length=100, allow_blank=True, required=False)
+    cashier_inn = serializers.CharField(max_length=12, allow_blank=True, required=False)
 
     def update(self, instance, validated_data):
         instance.inn_kkt = validated_data.get('inn_kkt', instance.inn_kkt)
@@ -21,14 +21,15 @@ class CheckSerializer(serializers.Serializer):
 
     check_num = serializers.IntegerField()
     shft_num = serializers.IntegerField()
-    buyer_name = serializers.CharField(max_length=200)
-    buyer_inn = serializers.CharField(max_length=12)
+    buyer_name = serializers.CharField(max_length=200, allow_blank=True, required=False)
+    buyer_inn = serializers.CharField(max_length=12, allow_blank=True, required=False)
     tax_system = serializers.CharField(max_length=1)
-    send_check_to = serializers.CharField(max_length=50)
+    send_check_to = serializers.CharField(max_length=50, allow_blank=True, required=False)
     cash = serializers.IntegerField()
     ecash = serializers.IntegerField()
-    status = serializers.CharField(max_length=10)
+    status = serializers.CharField(max_length=100)
     date_added = serializers.DateTimeField()
+
 
     def update(self, instance, validated_data):
 

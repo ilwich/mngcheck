@@ -16,9 +16,9 @@ class Kkt(models.Model):
     #номер текущего фискального накопителя
     fn_number = models.CharField(max_length=16)
     #имя кассира
-    cashier_name = models.CharField(max_length=50)
+    cashier_name = models.CharField(max_length=100, blank=True)
     #инн кассира
-    cashier_inn = models.CharField(max_length=12, default='0000000000')
+    cashier_inn = models.CharField(max_length=12, blank=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -38,14 +38,14 @@ class Check_kkt(models.Model):
     kkt = models.ForeignKey(Kkt, on_delete=models.CASCADE)
     shft_num = models.IntegerField(default=0)
     check_num = models.IntegerField(default=0)
-    buyer_name = models.CharField(max_length=200)
-    buyer_inn = models.CharField(max_length=12, default='0000000000')
+    buyer_name = models.CharField(max_length=200, blank=True)
+    buyer_inn = models.CharField(max_length=12, blank=True)
     tax_system = models.CharField(choices=Taxsystem.choices, max_length=1, default='0')
     send_check_to = models.CharField(max_length=50)
-    cash = models.IntegerField()
-    ecash = models.IntegerField()
+    cash = models.IntegerField(default=0)
+    ecash = models.IntegerField(default=0)
     date_added = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=60, default='Добавлен')
+    status = models.CharField(max_length=100, default='Добавлен')
     bot_message_id = models.CharField(max_length=40, default='0')
 
     class Meta:
