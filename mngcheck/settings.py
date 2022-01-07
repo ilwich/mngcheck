@@ -45,7 +45,7 @@ ALLOWED_HOSTS = ["web", "127.0.0.1"] if os.environ.get("NODEBUG") is None else [
 
 if os.environ.get("IN_SERVER"):
     # Stuff for when running in Docker-compose.
-    DEFAULT_DOMAIN = 'http://{}'.format(ALLOWED_HOSTS[1])
+    DEFAULT_DOMAIN = 'https://{}'.format('kassbot.website')
     #CELERY_BROKER_URL = 'redis://redis:6379/1'
     #CELERY_RESULT_BACKEND = 'redis://redis:6379/1'
 
