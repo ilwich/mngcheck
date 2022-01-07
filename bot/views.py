@@ -1,6 +1,7 @@
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import redirect
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from bot.models import Botuser, Botmessage
 from datetime import datetime
 from icecream import ic
@@ -34,6 +35,18 @@ def send_qr_check_telebot(data, reply_to_update_id):
         os.remove(full_path_to_qr_file)
     except IOError:
         return False
+
+
+@login_required
+def telebot_new_user(request, message_from_id):
+    """Привязка id телеграм пользователя к пользователю сайта"""
+    if Botuser.objects.filter(bot_user_id__exact=message_from_id).count() > 0:
+        new_bot_user = Botuser.objects.filter(bot_user_id__exact=message_from_id).get()
+        new_bot_user.owner = request.user
+        new_bot_user.login_name = request.user.username
+        new_bot_user.bot_user_status = 'Выбор'
+        new_bot_user.save()
+    return redirect('kkt_check:kktlist')
 
 
 def send_reply_telebot(msg, reply_to_update_id):
@@ -151,7 +164,7 @@ def talkin_to_me_bruh(request):
                 return None
         else:
             try:
-                if str(message_text) == "/start":  # добавление нового пользователя по команде страрт
+                if str(message_text) == "/start":  # добавление нового пользователя по команде старт
                     new_bot_user = Botuser(
                         bot_user_id=int(sender_id),
                         first_name=str(json_dict['message']['from'].get('first_name')),
@@ -159,7 +172,8 @@ def talkin_to_me_bruh(request):
 
                     )
                     new_bot_user.save()
-                    send_answer(new_bot_user, new_bot_user.bot_user_status, None)
+
+                    send_answer(new_bot_user, 'Нажмите кнопку "Войти', ['Войти'])
                 return True
             except (KeyError, ValueError):
                 return None

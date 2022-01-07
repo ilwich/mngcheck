@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, login
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.authtoken.models import Token
 from kkt_check.models import Kkt, Check_good, Check_kkt
@@ -86,12 +87,24 @@ def email_in_msg(str_in):
 
 
 def bot_autorisation(bot_user, msg_text):
-    """Ввод имени"""
-    bot_user.login_name = msg_text.strip()
-    bot_user.bot_user_status = 'Пароль'
+    """Отправка сообщения со ссылкой на регистрацию нового пользователя телеграмм бота на сайте"""
+    bot_user_reg_url = f"{settings.DEFAULT_DOMAIN}/bot/telebot_new_user/{bot_user.bot_user_id}/"
+    bot_user.bot_user_status = 'Проверка регистрации'
     bot_user.save()
-    return {"text": "Введите пароль",
-            "markup": ['Отмена']}
+    return {"text": f"Пройдите регистрацию нового пользователя телеграмм бота по ссылке.\n {bot_user_reg_url}",
+            "markup": ['Войти']}
+
+
+def check_bot_autorisation(bot_user, msg_text):
+    """Отправка сообщения соссылкой на регистрацию нового пользователя телеграмм бота на сайте"""
+    if msg_text.lower() == 'войти' and bot_user.owner != 3:
+        bot_user.bot_user_status = 'Выбор'
+        bot_user.save()
+        return {"text": "Пользователь авторизован.\nВыберете действие:",
+                "markup": ['Чек прихода', 'Отмена']}
+    bot_user_reg_url = f"{settings.DEFAULT_DOMAIN}/bot/telebot_new_user/{bot_user.bot_user_id}/"
+    return {"text": f"Пройдите регистрацию нового пользователя телеграмм бота по ссылке {bot_user_reg_url}",
+            "markup": ['Войти']}
 
 
 def login_pass(bot_user, msg_text):
@@ -114,7 +127,7 @@ def bot_menu(bot_user, msg_text):
     """Вывод меню выбора"""
     if msg_text == 'Чек прихода': # Чек прихода
         kkts = Kkt.objects.filter(owner=bot_user.owner)
-        if kkts is None:
+        if kkts.count() == 0:
             return {"text": "Список касс пуст. Необходимо добавить кассу на сайте",
                     "markup": ['Чек прихода', 'Отмена']}
         else:
@@ -126,8 +139,8 @@ def bot_menu(bot_user, msg_text):
             res.append('Отмена')
             return {"text": "Выбирайте кассу",
                     "markup": res}
-    return {"text": "Печатаем чек",
-            "markup": ['Отмена']}
+    return {"text": "Выбирайте действие",
+            "markup": None}
 
 
 def bot_check_kkt(bot_user, msg_text):
@@ -464,6 +477,7 @@ def finish_check(bot_user, msg_text):
 user_command_status = {
     # логика диалога бота
     'Авторизация': bot_autorisation,
+    'Проверка регистрации': check_bot_autorisation,
     'Пароль': login_pass,
     'Выбор': bot_menu,
     'Выбор кассы': bot_check_kkt,

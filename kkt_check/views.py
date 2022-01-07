@@ -28,8 +28,6 @@ def telegram_id_in_msg(str_in):
         return False
 
 
-
-
 class GetKktInfoView(APIView):
     permission_classes = (IsAuthenticated,)
 
