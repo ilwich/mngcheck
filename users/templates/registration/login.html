@@ -13,6 +13,7 @@
     {% buttons %}
       <button name="submit" class="btn btn-primary">Вход</button>
     {% endbuttons %}
+    <p><a href="{% url 'reset_password' %}">Забыли пароль?</a></p>
     <input type="hidden" name="next"
     value="{% url 'kkt_check:index' %}" />
   </form>

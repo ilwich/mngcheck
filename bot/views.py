@@ -76,8 +76,8 @@ def bot_cancel_message(bot_user, msg_text):
     if msg_text.lower() in ['отмена', 'выход']:  # Отмена
         bot_user.bot_user_status = 'Авторизация'
         bot_user.save()
-        return {"text": "Спасибо за работу. \n Авторизация. Введите логин:",
-                "markup": ['Отмена']}
+        return {"text": "Спасибо за работу. \n Для начала работы нажмите Войти",
+                "markup": ['Войти']}
     else:
         return False
 

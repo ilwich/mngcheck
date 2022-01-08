@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from pathlib import Path
 import django_heroku
+
 import rest_framework.permissions
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -180,6 +181,16 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated'
     ]
 }
+
+# for sending mail
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'smtp.mail.ru'
+EMAIL_PORT = 2525
+EMAIL_HOST_USER = 'buh@5element35.ru'
+EMAIL_HOST_PASSWORD = 'Buh_388364'
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'buh@5element35.ru'
+SERVER_EMAIL = 'buh@5element35.ru'
 
 # Мои настройки
 LOGIN_URL = '/users/login/'
