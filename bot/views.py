@@ -3,6 +3,7 @@ from django.shortcuts import redirect
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from bot.models import Botuser, Botmessage
+from users.models import Profile
 from datetime import datetime
 from icecream import ic
 import json
@@ -19,7 +20,7 @@ TelegramBot = Bot(TOKEN)
 
 
 def send_qr_check_telebot(data, reply_to_update_id):
-    """Отправка файла картинки с QR на сообщение"""
+    """Отправка файла картинки с QR в ответ на сообщение"""
     try:
         bot_msg = Botmessage.objects.get(update_id=reply_to_update_id)
     except Botmessage.DoesNotExist:
@@ -32,6 +33,21 @@ def send_qr_check_telebot(data, reply_to_update_id):
     img.save(full_path_to_qr_file)
     try:
         TelegramBot.sendPhoto(bot_msg.sender.bot_user_id, open(full_path_to_qr_file, 'rb'))
+        os.remove(full_path_to_qr_file)
+    except IOError:
+        return False
+
+
+def send_qr_payment_telebot(data, bot_user):
+    """Отправка файла картинки с QR пользователю бота"""
+    filename = f"qr_payment{bot_user.bot_user_id}.png"
+    full_path_to_qr_file = os.path.join(settings.STATICFILES_DIRS[0], filename)
+    # генерируем qr-код
+    img = qrcode.make(data)
+    # сохраняем img в файл
+    img.save(full_path_to_qr_file)
+    try:
+        TelegramBot.sendPhoto(bot_user.bot_user_id, open(full_path_to_qr_file, 'rb'))
         os.remove(full_path_to_qr_file)
     except IOError:
         return False
@@ -85,11 +101,13 @@ def bot_cancel_message(bot_user, msg_text):
 def bot_finish_message(bot_msg):
     """Проверка ссобщения Регистрация чека"""
     if bot_msg.text.strip().lower() in ['регистрация чека']:  # Завершение создания чека
-        bot_msg.text = bot_msg.sender.current_сheck.get_text_of_check() # Информацию чека сохраняем в текст сообщения
+        bot_msg.text = bot_msg.sender.current_сheck.get_text_of_check()
+        # Информацию чека сохраняем в текст сообщения
         bot_msg.save()
         bot_msg.sender.bot_user_status = 'Выбор'
         bot_msg.sender.save()
-        bot_msg.sender.current_сheck.bot_message_id = f'telegram msg_id: {str(bot_msg.update_id)}' # Сохраняем id сообщения в чек
+        # Сохраняем id сообщения в чек
+        bot_msg.sender.current_сheck.bot_message_id = f'telegram msg_id: {str(bot_msg.update_id)}'
         bot_msg.sender.current_сheck.status = 'Добавлен'
         bot_msg.sender.current_сheck.save()
         return {"text": "Пользователь авторизован.\nВыберете действие:",
@@ -98,10 +116,31 @@ def bot_finish_message(bot_msg):
         return False
 
 
+def bot_qr_payment_message(bot_msg):
+    """Проверка ссобщения QR-код квитанции"""
+    if bot_msg.text.strip().lower() in ['qr-код квитанции']:  # Проверка запроса кода квитанции
+        # Получаем состав кода из профиля пользователя на основании владельца бота
+        bot_msg_user_profile = Profile.objects.filter(user=bot_msg.sender.owner).get()
+        # получаем сумму чека для добавления в квитанцию
+        summ_of_check = bot_msg.sender.current_сheck._get_goods_summ()
+        # получаем ИНН пользователя
+        payee_inn = bot_msg.sender.current_сheck.kkt.inn_kkt
+        bot_msg.text = bot_msg_user_profile.get_qr_payment_data()+f'|Sum={summ_of_check}|PayeeINN={payee_inn}'
+        # Отправляем данные на генерацию QR  и на отправку в бот
+        if send_qr_payment_telebot(bot_msg.text, bot_msg.sender):
+            # Информацию qr квитанции сохраняем в текст сообщения
+            bot_msg.save()
+        return {"text": "Квитанция для оплаты сформирована. Продолжите регистрацию чека",
+                "markup": None}
+    else:
+        return False
+
+
 def msg_command_center(bot_msg):
     """Обработка нового сообщения от бота.Выполняем функцию по текущему статусу пользователя"""
     cancel_message = bot_cancel_message(bot_msg.sender, bot_msg.text)  # Проверка команды Отмена
-    finish_message = bot_finish_message(bot_msg) # Проверка сообщения Регистрировать чек
+    finish_message = bot_finish_message(bot_msg)  # Проверка сообщения Регистрировать чек
+    QR_payment_message = bot_qr_payment_message(bot_msg)  # Проверка сообщения запрос квитанции
     if cancel_message:
         send_answer(bot_msg.sender, cancel_message['text'], cancel_message['markup'])
         return True

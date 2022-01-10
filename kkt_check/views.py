@@ -15,6 +15,8 @@ from django.http.response import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 import os
+import datetime
+import pytz
 from re import findall
 
 
@@ -51,6 +53,9 @@ class GetKktDetail(APIView):
             kkt = Kkt.objects.get(fn_number=fn_number)
         except Kkt.DoesNotExist:
             return JsonResponse({'message': 'The kkt does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        # Проверка оплаты тарифа по кассе
+        if kkt.data_end_of_payment < datetime.datetime.utcnow().replace(tzinfo=pytz.UTC):
+            return JsonResponse({'message': 'The kkt do not payment'}, status=status.HTTP_404_NOT_FOUND)
         # Сериализуем извлечённую запись
         serializer_for_queryset = KktSerializer(kkt)
         return Response(serializer_for_queryset.data)
@@ -75,8 +80,11 @@ class GetCheckInfoView(APIView):
             kkt = Kkt.objects.get(fn_number=fn_number)
         except Kkt.DoesNotExist:
             return JsonResponse({'message': 'The kkt does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        # Проверка оплаты тарифа по кассе
+        if kkt.data_end_of_payment < datetime.datetime.utcnow().replace(tzinfo=pytz.UTC):
+            return JsonResponse({'message': 'The kkt do not payment'}, status=status.HTTP_404_NOT_FOUND)
+        # Поиск чеков со статусом добавлен
         kkt_checks = kkt.check_kkt_set.filter(status='Добавлен').order_by('-date_added').values()
-
         # Сериализуем извлечённую запись
         serializer_for_queryset = CheckSerializer(kkt_checks, many=True)
         return Response(serializer_for_queryset.data)

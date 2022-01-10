@@ -1,29 +1,36 @@
 from django.db import models
 from django.contrib.auth.models import User
 from .serializers import GoodSerializer
+import datetime
 from icecream import ic
+import pytz
 
 # Create your models here.
 
 class Kkt(models.Model):
     """касса, которой владеет пользователь"""
-    #наименование кассы
+    # наименование кассы
     name = models.CharField(max_length=200)
-    #дата добавления
+    # дата добавления
     date_added = models.DateTimeField(auto_now_add=True)
-    #инн владельца кассы
+    # инн владельца кассы
     inn_kkt = models.CharField(max_length=12)
-    #номер текущего фискального накопителя
+    # номер текущего фискального накопителя
     fn_number = models.CharField(max_length=16)
-    #имя кассира
+    # имя кассира
     cashier_name = models.CharField(max_length=100, blank=True)
-    #инн кассира
+    # инн кассира
     cashier_inn = models.CharField(max_length=12, blank=True)
+    # пользователь владелец кассы
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    # дата окончания оплаты сервиса по кассе
+    data_end_of_payment = models.DateTimeField(default=datetime.datetime.utcnow().replace(tzinfo=pytz.UTC))
 
     def __str__(self):
         """Возвращает строковое представление модели."""
-        return f"Касса {self.name} С ФН № {self.fn_number}"
+        # Проверяем дату оплату с текущей
+        kkt_payment_status = "Действует" if self.data_end_of_payment > datetime.datetime.utcnow().replace(tzinfo=pytz.UTC) else "Не оплачен"
+        return f"Касса {self.name} С ФН № {self.fn_number} тариф: {kkt_payment_status}"
 
 
 class Check_kkt(models.Model):

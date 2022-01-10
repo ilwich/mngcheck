@@ -9,7 +9,9 @@
 
 {% endblock page_header %}
 {% block content %}
-
+    <h4 class="card-header">
+    Тариф оплачен до {{ kkt.data_end_of_payment|date:'d.m.Y' }}
+    </h4>
     <form action="{% url 'kkt_check:edit_kkt' kkt.id %}" method='post'>
         {% csrf_token %}
         {% bootstrap_form form %}

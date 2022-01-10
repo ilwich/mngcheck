@@ -1,7 +1,8 @@
 {% extends 'kkt_check/base.html' %}
 {% block page_header %}
 <h3>Касса: {{ kkt }}
-   <small><a href="{% url 'kkt_check:edit_kkt' kkt.id %}">Редактировать кассу</a></small>
+    <br>
+   <small><a href="{% url 'kkt_check:edit_kkt' kkt.id %}"> Редактировать кассу</a></small>
 </h3>
 {% endblock page_header %}
 {% block content %}

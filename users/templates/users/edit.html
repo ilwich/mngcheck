@@ -1,0 +1,21 @@
+{% extends "kkt_check/base.html" %}
+{% load bootstrap4 %}
+
+{% block page_header %}
+<h2>Редактирование профиля пользователя</h2>
+{% endblock page_header %}
+
+{% block content %}
+    <h1>Измените данные</h1>
+    <p>Вы можете отредактировать данные кампании для формирования квитанции на оплату через систему QR код</p>
+    {% csrf_token %}
+    <form action="." method="post" enctype="multipart/form-data">
+        {% bootstrap_form user_form %}
+        {% bootstrap_form profile_form %}
+
+        {% csrf_token %}
+        {% buttons %}
+                <button name="submit" class="btn btn-primary">Сохранить изменения</button>
+        {% endbuttons %}
+    </form>
+{% endblock content %}

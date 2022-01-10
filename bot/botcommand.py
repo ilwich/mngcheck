@@ -291,6 +291,7 @@ def payment_type(bot_user, msg_text):
             bot_user.save()
             # получение суммы из суммы списка товаров
             summ_of_check = bot_user.current_сheck._get_goods_summ()
+
             return {"text": "Выведите сумму оплаты наличными",
                     "markup": ['Безналичными', str(summ_of_check)[:-2]+'.'+str(summ_of_check)[-2:]]}
     elif msg_text == 'Безналичные':  # Оплата безналичными
@@ -300,7 +301,7 @@ def payment_type(bot_user, msg_text):
             # получение суммы из суммы списка товаров
             summ_of_check = bot_user.current_сheck._get_goods_summ()
             return {"text": "Введите сумму оплаты безналичными",
-                    "markup": ['Наличными', str(summ_of_check)[:-2]+'.'+str(summ_of_check)[-2:]]}
+                    "markup": ['Наличными', str(summ_of_check)[:-2]+'.'+str(summ_of_check)[-2:], 'QR-код квитанции']}
     else:
         return {"text": 'Выбирайте действие из списка',
                 "markup": None}
@@ -329,7 +330,7 @@ def cash_payment(bot_user, msg_text):
             # получение суммы из суммы списка товаров
             summ_of_check = bot_user.current_сheck._get_goods_summ()
             return {"text": "Введите сумму оплаты безналичными",
-                    "markup": ['Наличными', str(summ_of_check)[:-2]+'.'+str(summ_of_check)[-2:]]}
+                    "markup": ['Наличными', str(summ_of_check)[:-2]+'.'+str(summ_of_check)[-2:], 'QR-код квитанции']}
     return {"text": 'Введите сумму оплаты наличными. Сумма оплаты должна быть больше суммы номенклатуры чека.',
             "markup": None}
 
