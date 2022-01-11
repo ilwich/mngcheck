@@ -60,7 +60,7 @@ def telebot_new_user(request, message_from_id):
         new_bot_user = Botuser.objects.filter(bot_user_id__exact=message_from_id).get()
         new_bot_user.owner = request.user
         new_bot_user.login_name = request.user.username
-        new_bot_user.bot_user_status = 'Выбор'
+        new_bot_user.bot_user_status = 'Проверка регистрации'
         new_bot_user.save()
     return redirect('kkt_check:kktlist')
 
