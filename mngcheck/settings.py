@@ -194,6 +194,7 @@ SERVER_EMAIL = 'buh@5element35.ru'
 
 # Мои настройки
 LOGIN_URL = '/users/login/'
+LOGIN_REDIRECT_URL = '/users/edit/'
 
 # Activate Django-Heroku.
 django_heroku.settings(locals())
