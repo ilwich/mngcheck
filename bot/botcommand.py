@@ -13,8 +13,8 @@ def fn_number_in_msg(str_in):
     """Выделим номер ФН в тексте сообщений"""
     for words in str_in.split():
         fn_number = ''.join(i for i in words if i.isdigit())
-        if len(fn_number) != 16: fn_number = False
-    return fn_number
+        if len(fn_number) == 16: return fn_number
+    return False
 
 
 def summ_in_msg(str_in):
