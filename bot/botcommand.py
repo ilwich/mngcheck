@@ -99,7 +99,7 @@ def bot_autorisation(bot_user, msg_text):
 
 def check_bot_autorisation(bot_user, msg_text):
     """Отправка сообщения соссылкой на регистрацию нового пользователя телеграмм бота на сайте"""
-    if msg_text.lower() == 'войти' and bot_user.owner != 3:
+    if msg_text.lower() == 'войти':
         bot_user.bot_user_status = 'Выбор'
         bot_user.save()
         return {"text": "Пользователь авторизован.\nВыберете действие:",
