@@ -10,14 +10,18 @@
   <small><a href="{% url 'kkt_check:new_check_kkt' kkt.id %}">Добавить чек</a></small>
 </h3>
   <ul>
-    {% for check in kkt_checks %}
+    {% for check in kkt_checks|slice:":10" %}
       <div class="card mb-3">
         <h4 class="card-header">
           Создан {{ check.date_added|date:'M d, Y H:i' }} - {{ check }}
           <small> <a href="{% url 'kkt_check:edit_check_kkt' check.id %}">Редактировать</a></small>
           <small> <a href="{% url 'kkt_check:del_check_kkt' check.id %}">Удалить</a></small>
           <div class="card-body">
-            Статус : {{ check.status|linebreaks }}
+              {% if 't=' in check.status  %}
+                Статус : Проведен на кассе {{ check.status|slice:"2:15"|linebreaks }}
+              {% else %}
+                Статус : {{ check.status|linebreaks }}
+              {% endif %}
           </div>
         </h4>
       </div>

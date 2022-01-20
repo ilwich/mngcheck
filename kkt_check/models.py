@@ -16,7 +16,7 @@ class Kkt(models.Model):
     # инн владельца кассы
     inn_kkt = models.CharField(max_length=12)
     # номер текущего фискального накопителя
-    fn_number = models.CharField(max_length=16)
+    fn_number = models.CharField(max_length=16, unique=True)
     # имя кассира
     cashier_name = models.CharField(max_length=100, blank=True)
     # инн кассира
@@ -48,7 +48,7 @@ class Check_kkt(models.Model):
     buyer_name = models.CharField(max_length=200, blank=True)
     buyer_inn = models.CharField(max_length=12, blank=True)
     tax_system = models.CharField(choices=Taxsystem.choices, max_length=1, default='0')
-    send_check_to = models.CharField(max_length=50)
+    send_check_to = models.CharField(max_length=50, blank=True)
     cash = models.IntegerField(default=0)
     ecash = models.IntegerField(default=0)
     date_added = models.DateTimeField(auto_now_add=True)
@@ -57,6 +57,7 @@ class Check_kkt(models.Model):
 
     class Meta:
         verbose_name_plural = 'kkts'
+        
 
     def __str__(self):
         """Возвращает строковое представление чека."""
