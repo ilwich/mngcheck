@@ -14,7 +14,7 @@
         {% csrf_token %}
         {% bootstrap_form form %}
 
-        {% if check_kkt.status == 'Добавлен' %}
+        {% if check_kkt.status == 'Добавлен' or check_kkt.status == 'Формируется' %}
           {% buttons %}
                 <button name="submit" class="btn btn-primary">Сохранить изменения</button>
           {% endbuttons %}
@@ -24,7 +24,7 @@
     </form>
 <p>Позиции в чеке:</p>
 <p>
-    {% if check_kkt.status == 'Добавлен' %}
+    {% if check_kkt.status == 'Добавлен' or check_kkt.status == 'Формируется' %}
         <a href="{% url 'kkt_check:new_good_check_kkt' check_kkt.id %}">Добавить позицию в чек</a>
     {% endif %}
 </p>
@@ -34,7 +34,7 @@
         <p>{{ good }} </p>
         <p>{{ check.product_type_code|linebreaks }}</p>
         <p>
-          {% if check_kkt.status == 'Добавлен' %}
+          {% if check_kkt.status == 'Добавлен'  or check_kkt.status == 'Формируется' %}
             <a href="{% url 'kkt_check:edit_good_check_kkt' good.id %}">Редактировать</a>
             <a href="{% url 'kkt_check:del_good_check_kkt' good.id %}">Удалить</a>
           {% else %}

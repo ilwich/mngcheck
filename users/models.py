@@ -16,6 +16,10 @@ class Profile(models.Model):
     bic = models.CharField(max_length=9, blank=True, null=True)
     # Корр. счёт
     corres_acc = models.CharField(max_length=20, blank=True, null=True)
+    # Флаг настройки для выбора ставки ндс по умолчанию или от пользователя
+    tax_from_client = models.BooleanField(default=True)
+    # Флаг настройки для выбора системы налогообложения по умолчанию или от пользователя
+    tax_system_from_client = models.BooleanField(default=True)
 
     def __str__(self):
         return 'Профиль для пользователя {}'.format(self.user.username)

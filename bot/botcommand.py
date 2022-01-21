@@ -205,13 +205,22 @@ def goods_qty(bot_user, msg_text):
         bot_user.current_goods.qty = qty_in_msg(msg_text)
         bot_user.current_goods.save()
         # перходим на следующий шаг бот-пользователя
-        bot_user.bot_user_status = 'Выбор ставки налога'
-        bot_user.save()
-        # список ставок ндс
-        tax_choice = ['Отмена']
-        tax_choice.extend([val[1] for val in Check_good.Tax.choices])
-        return {"text": 'Выберите ставку налога',
-                "markup": tax_choice}
+        # проверка ставки налога по умолчанию задана в профиле
+        if bot_user.current_goods.get_tax_for_goods():
+            bot_user.bot_user_status = 'Ввод цены номенклатуры'
+            bot_user.current_goods.tax_code = bot_user.current_goods.get_tax_for_goods()
+            bot_user.current_goods.save()
+            bot_user.save()
+            return {"text": 'Введите цену за единицу',
+                    "markup": ['Отмена']}
+        else:
+            bot_user.bot_user_status = 'Выбор ставки налога'
+            bot_user.save()
+            # список ставок ндс
+            tax_choice = ['Отмена']
+            tax_choice.extend([val[1] for val in Check_good.Tax.choices])
+            return {"text": 'Выберите ставку налога',
+                    "markup": tax_choice}
     return {"text": 'Введите количество',
             "markup": None}
 
@@ -424,6 +433,15 @@ def send_check_to(bot_user, msg_text):
     if email_in_msg(msg_text.strip()):
         bot_user.current_сheck.send_check_to = msg_text.strip()
         bot_user.current_сheck.save()
+        if bot_user.current_сheck.get_tax_system_for_check():
+            bot_user.current_сheck.tax_system = bot_user.current_сheck.get_tax_system_for_check()
+            bot_user.current_сheck.save()
+            # перходим на следующий шаг бот-пользователя
+            bot_user.bot_user_status = 'Вывод окончательного варианта чека'
+            bot_user.save()
+            text_of_check = bot_user.current_сheck.get_text_of_check()
+            return {"text": f'Проверьте реквизиты чека.\n {text_of_check}',
+                    "markup": ['Регистрация чека', 'Аннулировать чек']}
         # Переход на выбор системы налогообложения в чек
         bot_user.bot_user_status = 'Выбор системы налогообложения'
         bot_user.save()
@@ -431,6 +449,15 @@ def send_check_to(bot_user, msg_text):
         return {"text": 'Выберите систему налогообложения',
                 "markup": [val[1] for val in Check_kkt.Taxsystem.choices]}
     elif msg_text.strip() == 'Пропустить':
+        if bot_user.current_сheck.get_tax_system_for_check():
+            bot_user.current_сheck.tax_system = bot_user.current_сheck.get_tax_system_for_check()
+            bot_user.current_сheck.save()
+            # перходим на следующий шаг бот-пользователя
+            bot_user.bot_user_status = 'Вывод окончательного варианта чека'
+            bot_user.save()
+            text_of_check = bot_user.current_сheck.get_text_of_check()
+            return {"text": f'Проверьте реквизиты чека.\n {text_of_check}',
+                    "markup": ['Регистрация чека', 'Аннулировать чек']}
         bot_user.bot_user_status = 'Выбор системы налогообложения'
         bot_user.save()
         # список систем налогообложения из модели чека

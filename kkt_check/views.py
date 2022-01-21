@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import get_object_or_404
 from .models import Kkt, Check_kkt, Check_good
+from users.models import Profile
 from bot.views import send_reply_telebot, send_qr_check_telebot
 from .serializers import KktSerializer, CheckSerializer, GoodSerializer
 from .forms import KktForm, CheckForm, GoodForm
@@ -236,15 +237,27 @@ def new_check_kkt(request, kkt_id):
         kkt = Kkt.objects.get(id=kkt_id)
     except Kkt.DoesNotExist:
         raise Http404
+    if kkt.owner != request.user:
+        raise Http404
+    # Получаем настройки пользователя
+    initial_dict = {}
+    try:
+        profile = Profile.objects.get(user=request.user)
+        # Проверяем установку в профиле для назначения системы нологообложения в чек
+        if not profile.tax_system_from_client:
+            initial_dict['tax_system'] = kkt.tax_system
+    except:
+        initial_dict = {}
     if request.method != 'POST':
         # Данные не отправлялись; создается пустая форма.
-        form = CheckForm()
+        form = CheckForm(initial=initial_dict)
     else:
         # Отправлены данные POST; обработать данные.
         form = CheckForm(data=request.POST)
         if form.is_valid():
             new_check_kkt = form.save(commit=False)
             new_check_kkt.kkt = kkt
+            new_check_kkt.status = "Формируется"
             new_check_kkt.save()
             return redirect('kkt_check:kkt', kkt_id=kkt_id)
     # Вывести пустую или недействительную форму.
@@ -261,6 +274,7 @@ def edit_check_kkt(request, check_kkt_id):
     except Check_kkt.DoesNotExist:
         raise Http404
     kkt_check_goods_val = check_kkt.checkkktset.all().values()
+    # ВЫчисляем сумму товаров и услуг в чеке
     sum_cash_in_goods = sum((good['price'] * good['qty']) / 10000 for good in kkt_check_goods_val)
     if kkt.owner != request.user:
         raise Http404
@@ -278,6 +292,9 @@ def edit_check_kkt(request, check_kkt_id):
                 form.add_error('cash', msg)
                 form.add_error('ecash', msg)
             else:
+                # Проверяем, что товары добавлены и можно менять статус чека для его фискализации
+                if sum_cash_in_goods > 0:
+                    check_kkt.status = 'Добавлен'
                 form.save()
                 return redirect('kkt_check:kkt', kkt_id=kkt.id)
     kkt_check_goods = check_kkt.checkkktset.all()
@@ -304,11 +321,21 @@ def new_good_check_kkt(request, check_kkt_id):
     """Добавляет новую позицию в конкретный чек"""
     try:
         check_kkt = Check_kkt.objects.get(id=check_kkt_id)
+        kkt = check_kkt.kkt
     except Check_kkt.DoesNotExist:
         raise Http404
+    # Получаем настройки пользователя
+    initial_dict = {'qty': 10000}
+    try:
+        profile = Profile.objects.get(user=request.user)
+        # Если в профиле стоит брать по умолчанию, то берем из настроек кассы
+        if not profile.tax_from_client:
+            initial_dict['tax_code'] = kkt.tax_code
+    except:
+        pass
     if request.method != 'POST':
         # Данные не отправлялись; создается пустая форма.
-        form = GoodForm(initial={'qty': 10000, 'tax_code': 6})
+        form = GoodForm(initial=initial_dict)
     else:
         # Отправлены данные POST; обработать данные.
         form = GoodForm(data=request.POST)

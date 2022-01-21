@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from .serializers import GoodSerializer
+from users.models import Profile
 import datetime
 from icecream import ic
 import pytz
@@ -9,6 +10,19 @@ import pytz
 
 class Kkt(models.Model):
     """касса, которой владеет пользователь"""
+
+    class Taxsystem(models.TextChoices):
+        Общая = '0'
+        Упрощенная_Доходы = '1'
+        Упрощенная_Доходы_минус_Расходы = '2'
+        Патент = '5'
+
+    class Tax(models.IntegerChoices):
+        НДС_не_облагается = 6
+        Ставка_НДС_20 = 1
+        Ставка_НДС_10 = 2
+        Ставка_НДС_0 = 5
+
     # наименование кассы
     name = models.CharField(max_length=200)
     # дата добавления
@@ -25,6 +39,11 @@ class Kkt(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     # дата окончания оплаты сервиса по кассе
     data_end_of_payment = models.DateTimeField(default=datetime.datetime.utcnow().replace(tzinfo=pytz.UTC))
+    # система налогообложения по умолчанию для чеков
+    tax_system = models.CharField(choices=Taxsystem.choices, max_length=1, default='0')
+    # ставка ндс по умолчанию для чеков
+    tax_code = models.IntegerField(choices=Tax.choices, default=6)
+
 
     def __str__(self):
         """Возвращает строковое представление модели."""
@@ -138,7 +157,6 @@ class Check_kkt(models.Model):
         good_for_queryset = self.checkkktset.filter(check_kkt=self)
         for good in good_for_queryset:
             res_text_list.append(f'{good.product_name}')
-            ic(Check_good.Product_type.choices[1])
             good_type_code = [val[1] for val in Check_good.Product_type.choices if val[0] == good.product_type_code]
             good_tax_code = [val[1] for val in Check_good.Tax.choices if val[0] == good.tax_code]
             res_text_list.append(f'{good_type_code[0]} {good_tax_code[0]}')
@@ -149,6 +167,18 @@ class Check_kkt(models.Model):
         res_text_list.append(f'СНО: {tax_system[0]}')
         return '\n'.join(res_text_list)
 
+    def get_tax_system_for_check(self):
+        """Возвращаем СНО для чека по умолчанию если задана"""
+        try:
+            # Получаем профиль пользователя кассы по чеку
+            profile = Profile.objects.get(user=self.kkt.owner)
+            # Проверяем установку в профиле для назначения СНО в чек
+            if not profile.tax_system_from_client:
+                return self.kkt.tax_system
+            else:
+                return False
+        except:
+            return False
 
 class Check_good(models.Model):
     """продажи в чек пользователя на ККТ"""
@@ -175,3 +205,16 @@ class Check_good(models.Model):
         """Возвращает строковое представление товара."""
         summa = (self.qty * self.price) / 1000000
         return f"{self.product_name[:50]} на сумму {str(summa)}"
+
+    def get_tax_for_goods(self):
+        """Возвращаем ставку НДС по умолчанию если задана"""
+        try:
+            # Получаем профиль пользователя кассы по товару в чеке
+            profile = Profile.objects.get(user=self.check_kkt.kkt.owner)
+            # Проверяем установку в профиле для назначения ставки НДС в чек
+            if not profile.tax_from_client:
+                return self.check_kkt.kkt.tax_code
+            else:
+                return False
+        except:
+            return False

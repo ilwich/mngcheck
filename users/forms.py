@@ -23,10 +23,13 @@ class ProfileEditForm(forms.ModelForm):
     bank_name = forms.CharField(label='Наименование банка для квитанции оплаты')
     bic = forms.CharField(label='БИК банка для квитанции')
     corres_acc = forms.CharField(label='Корр. счёт для указания в квитанции')
+    tax_from_client = forms.BooleanField(label='Ставку НДС указать при создании чека', required=False)
+    tax_system_from_client = forms.BooleanField(label='СНО указать при создании чека', required=False)
 
     class Meta:
         model = Profile
-        fields = ('legal_entity', 'personal_acc', 'bank_name', 'bic', 'corres_acc')
+        fields = ('legal_entity', 'personal_acc', 'bank_name', 'bic', 'corres_acc',
+                  'tax_from_client', 'tax_system_from_client')
 
 
 class EditPassword(UserCreationForm):
