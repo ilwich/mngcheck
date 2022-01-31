@@ -12,7 +12,9 @@
     <form action="." method="post" enctype="multipart/form-data">
         {% bootstrap_form user_form %}
         {% bootstrap_form profile_form %}
-
+        {% if profile_form.client_status.value == 1 %}
+          {% bootstrap_form partner_profile_form %}
+        {% endif %}
         {% csrf_token %}
         {% buttons %}
                 <button name="submit" class="btn btn-primary">Сохранить изменения</button>

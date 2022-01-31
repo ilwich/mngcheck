@@ -1,0 +1,15 @@
+{% extends "kkt_check/base.html" %}
+{% load bootstrap4 %}
+
+{% block page_header %}
+<h1>Заказ кодов активации</h1>
+{% endblock page_header %}
+{% block content %}
+<form action="{% url 'partners:make_oder' %}" method='post'>
+  {% csrf_token %}
+  {% bootstrap_form form %}
+            {% buttons %}
+                <button name="submit" class="btn btn-primary">Заказать коды</button>
+            {% endbuttons %}
+</form>
+{% endblock content %}

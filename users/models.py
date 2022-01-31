@@ -4,6 +4,14 @@ from django.conf import settings
 
 class Profile(models.Model):
     """Описание профиля компании"""
+
+    # Описание типов клиента
+    class Clientstatus(models.IntegerChoices):
+        Клиент = 0
+        Партнёр = 1
+        Дилер = 2
+
+
     # Пользователь
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     # Название ИП или организации для квитанции
@@ -20,6 +28,8 @@ class Profile(models.Model):
     tax_from_client = models.BooleanField(default=True)
     # Флаг настройки для выбора системы налогообложения по умолчанию или от пользователя
     tax_system_from_client = models.BooleanField(default=True)
+    # Статус партнера
+    client_status = models.IntegerField(choices=Clientstatus.choices, default=0)
 
     def __str__(self):
         return 'Профиль для пользователя {}'.format(self.user.username)

@@ -1,0 +1,16 @@
+{% extends "kkt_check/base.html" %}
+{% block page_header %}
+<h1>Список партнеров</h1>
+{% endblock page_header %}
+{% block content %}
+  <ul>
+    {% for partner in partners_list %}
+     <h3>
+      <a href="{% url 'partners:view_order' partner.id %}">{{ partner|linebreaks }}</a>
+     </h3>
+
+    {% empty %}
+      <li><h3>Партнеры ещё не добавлены.</h3></li>
+    {% endfor %}
+  </ul>
+{% endblock content %}

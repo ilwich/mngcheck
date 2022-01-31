@@ -1,0 +1,17 @@
+{% extends "kkt_check/base.html" %}
+{% block page_header %}
+<h1>Список подключенных кассовых аппаратов клиентов</h1>
+{% endblock page_header %}
+{% block content %}
+  <ul>
+    {% for contract in contract_list %}
+     <h3>
+      <a href="{% url 'partners:view_contract' contract.id %}">{{ contract|linebreaks }}</a>
+     </h3>
+
+    {% empty %}
+      <li><h3>Клиенты ещё не добавлены.</h3></li>
+    {% endfor %}
+  </ul>
+<h3> <a href="{% url 'partners:new_contract' %}"> + Добавить клиента  </a></h3>
+{% endblock content %}

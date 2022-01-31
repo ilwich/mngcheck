@@ -25,10 +25,32 @@
             <a class="nav-link" href="{% url 'kkt_check:kktlist'%}">
               Список кассовых аппаратов</a></li>
         </ul>
+        <ul class="navbar-nav mr-auto">
+          {% if user.is_authenticated and user.profile.client_status == 1 %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'partners:contracts'%}">
+                Клиенты</a></li>
+          {% endif %}
+        </ul>
+        <ul class="navbar-nav mr-auto">
+          {% if user.is_authenticated and user.profile.client_status == 1 %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'partners:view_payment_codes'%}">
+                Коды активации</a></li>
+          {% endif %}
+        </ul>
+        <ul class="navbar-nav mr-auto">
+          {% if user.is_authenticated and user.profile.client_status == 2 %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'partners:partners'%}">
+                Партнеры</a></li>
+          {% endif %}
+        </ul>
+
         <ul class="navbar-nav ml-auto">
           {% if user.is_authenticated %}
             <li class="nav-item">
-              <span class="navbar-text"> Добро пожаловать, <a href="{% url 'users:edit' %}">{{ user.username }}</a>.</span>
+              <span class="navbar-text"> Добро пожаловать, <a href="{% url 'users:edit' %}" title = "Профиль">{{ user.username }}</a>.</span>
 
             </li>
             <li class="nav-item">

@@ -75,6 +75,7 @@ INSTALLED_APPS = [
     # Мои приложения
     'kkt_check',
     'users',
+    'partners',
     'bot.apps.BotConfig',
     # Сторонние приложения
     'bootstrap4',
