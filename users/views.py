@@ -1,33 +1,11 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login
-from django.contrib.auth.forms import UserCreationForm
-from .forms import UserForm, UserForm, ProfileEditForm
+from django.contrib.auth import login, authenticate
+from .forms import EditPassword, UserForm, ProfileEditForm, RegisterForm
 from .models import Profile
 from partners.models import Partnerprofile
 from partners.forms import PartnerProfileEditForm
 from django.contrib.auth.decorators import login_required
 from icecream import ic
-
-
-
-
-def register(request):
-    """Регистрирует нового пользователя."""
-    if request.method != 'POST':
-        # Выводит пустую форму регистрации.
-        form = UserForm(request.POST)
-    else:
-        # Обработка заполненной формы.
-        form = UserForm(request.POST)
-        if form.is_valid():
-            new_user = form.save()
-            profile = Profile.objects.create(user=new_user)
-            # Выполнение входа и перенаправление на домашнюю страницу.
-            login(request, new_user)
-            return redirect('kkt_check:index')
-    # Вывести пустую или недействительную форму.
-    context = {'form': form}
-    return render(request, 'users/register.html', context)
 
 
 @login_required
@@ -66,17 +44,20 @@ def edit(request):
     return render(request, 'users/edit.html', {'profile_form': profile_form, 'user_form': user_form})
 
 
-def register_old(request):
+def register(request):
     """Регистрирует нового пользователя."""
     if request.method != 'POST':
         # Выводит пустую форму регистрации.
-        form = UserCreationForm()
+        form = RegisterForm()
     else:
         # Обработка заполненной формы.
-        form = UserCreationForm(data=request.POST)
+        form = RegisterForm(data=request.POST)
         if form.is_valid():
             new_user = form.save()
+            # Создание дополнительного профиля пользователя
+            profile = Profile.objects.create(user=new_user)
             # Выполнение входа и перенаправление на домашнюю страницу.
+
             login(request, new_user)
             return redirect('kkt_check:index')
     # Вывести пустую или недействительную форму.

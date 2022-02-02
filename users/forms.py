@@ -5,8 +5,26 @@ from .models import Profile
 from django.core.exceptions import ValidationError
 
 
-class UserForm(forms.ModelForm):
+class RegisterForm(UserCreationForm):
     """Форма регистрации пользователя"""
+    username = forms.CharField(label="Имя пользователя для входа")
+    email = forms.EmailField(label="Адрес электронной почты для восстановления пароля")
+
+    class Meta:
+        model = User
+        fields = ('username', 'email', )
+
+    def save(self, commit=True):
+        user = super(RegisterForm, self).save(commit=False)
+        user.email = self.cleaned_data["email"]
+        username = self.cleaned_data["username"]
+        if commit:
+            user.save()
+        return user
+
+
+class UserForm(forms.ModelForm):
+    """Форма профиля пользователя"""
     username = forms.CharField(label='Username')
     first_name = forms.CharField(label='Имя представителя', required=False)
     last_name = forms.CharField(label='Фамилия представителя', required=False)
