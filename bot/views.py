@@ -8,8 +8,8 @@ from datetime import datetime
 from icecream import ic
 import json
 import qrcode
+from PIL import Image, ImageDraw, ImageFont
 from django.views.decorators.csrf import csrf_exempt
-
 from telepot import Bot
 from telepot.namedtuple import ReplyKeyboardMarkup, KeyboardButton
 from bot.botcommand import user_command_status
@@ -19,19 +19,33 @@ TOKEN = os.environ.get("BOT_TOKEN")
 TelegramBot = Bot(TOKEN)
 
 
-def send_qr_check_telebot(data, reply_to_update_id):
+def send_qr_check_telebot(kkt_check, reply_to_update_id):
     """Отправка файла картинки с QR в ответ на сообщение"""
     try:
         bot_msg = Botmessage.objects.get(update_id=reply_to_update_id)
     except Botmessage.DoesNotExist:
         return False
-    filename = f"qr_check{data[2:15]}.png"
+    # шрифт лежит в папке статик
+    filename = "shtrixfr57.ttf"
+    full_path_to_font_file = os.path.join(settings.STATICFILES_DIRS[0], filename)
+    # Формируем фон чека от количества строк в текстовом представлении данных чека
+    text_check = kkt_check.get_text_of_check()
+    image_txt = Image.new("RGB", (450, (text_check.count('\n') + 1) * 21 + 470), "white")
+    draw = ImageDraw.Draw(image_txt)
+    color = 'Black'
+    font = ImageFont.truetype(full_path_to_font_file, size=18, encoding='UTF-8')
+    draw.text((10, 10), image_txt, font=font, fill=color)
+    # формируем qr код чека в картинку
+    data_qr = kkt_check.status
+    img_qr = qrcode.make(data_qr)
+    # вставляем картинку qr на картинку чека
+    image_txt.paste(img_qr, (0, (image_txt.count('\n') + 1) * 21 + 20))
+    filename = f"qr_check{data_qr[2:15]}.png"
     full_path_to_qr_file = os.path.join(settings.STATICFILES_DIRS[0], filename)
-    # генерируем qr-код
-    img = qrcode.make(data)
-    # сохраняем img в файл
-    img.save(full_path_to_qr_file)
+    # Сохраняем результирующий файл
+    image_txt.save(full_path_to_qr_file)
     try:
+        # Пытаемся отправить файл в ответ на сообщение сформировавшее чек и удаляем файл
         TelegramBot.sendPhoto(bot_msg.sender.bot_user_id, open(full_path_to_qr_file, 'rb'))
         os.remove(full_path_to_qr_file)
     except IOError:

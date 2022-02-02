@@ -148,25 +148,33 @@ class Check_kkt(models.Model):
     def get_text_of_check(self):
         """Вывод информации о чеке для проверки реквизитов"""
         res_text_list = []
-        res_text_list.append(f'ККТ {self.kkt.name} ФН № {self.kkt.fn_number}')
-        res_text_list.append(f'ИНН {self.kkt.inn_kkt} кассир {self.kkt.cashier_name}')
-        res_text_list.append(f'ИНН Кассира {self.kkt.cashier_inn} ПРИХОД')
+        res_text_list.append(f'ККТ {self.kkt.name} ФН {self.kkt.fn_number}')
+        res_text_list.append(f'ФН {self.kkt.fn_number}')
+        res_text_list.append(f'ИНН {self.kkt.inn_kkt}  ЧЕК ПРИХОДА')
+        res_text_list.append(f'Кассир {self.kkt.cashier_name}')
         if self.buyer_inn != '0000000000':
-            res_text_list.append(f'Покупатель {self.buyer_name} ИНН {self.buyer_inn}')
+            res_text_list.append(f'Покупатель: {self.buyer_name} \nИНН {self.buyer_inn}')
         if self.send_check_to:
-            res_text_list.append(f'Адрес отправки чека: {self.send_check_to}')
+            res_text_list.append(f'email получателя: {self.send_check_to}')
         # Получаем список товаров из чека и считем сумму
         good_for_queryset = self.checkkktset.filter(check_kkt=self)
         for good in good_for_queryset:
+            # наименование товара
             res_text_list.append(f'{good.product_name}')
+            res_text_list.append(f'{good.qty / 10000} x {good.price / 100} = {int(good.price * good.qty / 1000000)}')
+            # Предмет расчёта и налог НДС
             good_type_code = [val[1] for val in Check_good.Product_type.choices if val[0] == good.product_type_code]
             good_tax_code = [val[1] for val in Check_good.Tax.choices if val[0] == good.tax_code]
             res_text_list.append(f'{good_type_code[0]} {good_tax_code[0]}')
-            res_text_list.append(f'{good.qty/10000} x {good.price/100} = {int(good.price * good.qty / 1000000)}')
         res_text_list.append(f'ИТОГО: {self._get_goods_summ() / 100} руб.')
-        res_text_list.append(f'Оплата - Наличными: {self.cash / 100} Безналичными: {self.ecash / 100}')
+        res_text_list.append(f'Наличными: {self.cash / 100} \nБезналичными: {self.ecash / 100}')
         tax_system = [val[1] for val in Check_kkt.Taxsystem.choices if val[0] == self.tax_system]
-        res_text_list.append(f'СНО: {tax_system[0]}')
+        if 't=' in self.status:
+            # дата из строки статуса чека
+            dt = self.status[2:15]
+            res_text_list.append(f'СНО: {tax_system[0]} {dt[9:11]}:{dt[11:]} {dt[6:8]}-{dt[4:6]}-{dt[:4]}')
+        else:
+            res_text_list.append(f'СНО: {tax_system[0]}')
         return '\n'.join(res_text_list)
 
     def get_tax_system_for_check(self):

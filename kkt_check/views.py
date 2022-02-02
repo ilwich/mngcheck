@@ -140,7 +140,8 @@ class GetCheckDetail((APIView)):
                     update_id = telegram_id_in_msg(saved_check.bot_message_id)
                     if update_id:
                         send_reply_telebot(str(saved_check), update_id)
-                        send_qr_check_telebot(saved_check.status, update_id)
+                        # отправка картинки с qr кодом чека
+                        send_qr_check_telebot(saved_check, update_id)
             return Response({
                 "success": f"Check '{saved_check.date_added}' updated successfully"
             })
