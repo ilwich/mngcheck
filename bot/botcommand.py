@@ -399,8 +399,10 @@ def buyer_name(bot_user, msg_text):
         # Переход на ввод адреса получателя чека
         bot_user.bot_user_status = 'Ввод адреса покупателя'
         bot_user.save()
+        buyer_emails = ['Пропустить']
+        buyer_emails.extend(bot_user.current_сheck._get_kkt_buyer_email())
         return {"text": "Введите e-mail адрес отправки электронного чека",
-                "markup": ['Пропустить']}
+                "markup": buyer_emails}
     return {"text": 'Выберите название покупателя или добавтье нового.',
             "markup": None}
 

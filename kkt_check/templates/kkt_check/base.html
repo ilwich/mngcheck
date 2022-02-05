@@ -1,4 +1,5 @@
 {% load bootstrap4 %}
+{% load static %}
 
 <!doctype html>
 <html lang="en">
@@ -9,6 +10,8 @@
     <title>Менеджер чеков ККТ v0.1</title>
     {% bootstrap_css %}
     {% bootstrap_javascript jquery='full' %}
+    <!-- Custom styles for this template -->
+    <link href="{% static 'css/sticky-footer.css'%}" rel="stylesheet">
   </head>
   <body>
 
@@ -74,5 +77,84 @@
         {% block content %}{% endblock content %}
       </div>
     </main>
+        <!-- Footer -->
+<footer class="page-footer font-small blue pt-4 card-footer sticky-top mt-auto">
+  <!-- Footer Links -->
+  <div class="container-fluid text-center text-md-left">
+    <!-- Grid row -->
+    <div class="row">
+      <!-- Grid column -->
+      <div class="col-md-6 mt-md-0 mt-3">
+        <!-- Content -->
+        <h5 class="text-uppercase">КАССБОТ</h5>
+        <p>Разработка и поддержка сервиса<br> ООО "Пятый элемент"<br> г. Вологда</p>
+
+      </div>
+      <!-- Grid column -->
+
+      <hr class="clearfix w-100 d-md-none pb-3">
+
+      <!-- Grid column -->
+      <div class="col-md-3 mb-md-0 mb-3">
+
+        <!-- Links -->
+        <h5 class="text-uppercase">Контакты</h5>
+
+        <ul class="list-unstyled">
+          <li>
+            <a href="https://t.me/+oKYPimVKgmtmZGQy">Телеграмм канал техподдержки</a>
+          </li>
+          <li>
+            <a href="+79212381251">Телефон: +7-921-238-12-51</a>
+          </li>
+          <li>
+            <a href="mailto:info@5element35.ru">info@5element35.ru</a>
+          </li>
+          <li>
+            <a href="vk.com">ВКонтакте</a>
+          </li>
+        </ul>
+
+      </div>
+      <!-- Grid column -->
+
+      <!-- Grid column -->
+      <div class="col-md-3 mb-md-0 mb-3">
+
+        <!-- Links -->
+        <h5 class="text-uppercase">Инструкции</h5>
+
+        <ul class="list-unstyled">
+          <li>
+            <a href="#!">Для клиентов</a>
+          </li>
+          <li>
+            <a href="#!">Для партнеров</a>
+          </li>
+          <li>
+            <a href="#!">Быстрый старт</a>
+          </li>
+          <li>
+            <a href="#!">Видео</a>
+          </li>
+        </ul>
+
+      </div>
+      <!-- Grid column -->
+
+    </div>
+    <!-- Grid row -->
+
+  </div>
+  <!-- Footer Links -->
+
+  <!-- Copyright -->
+  <div class="footer-copyright text-center py-3">© 2022 Copyright:
+    <a href="http://5element35.ru/"> 5element35.ru</a>
+  </div>
+  <!-- Copyright -->
+
+</footer>
+<!-- Footer -->
   </body>
 </html>
