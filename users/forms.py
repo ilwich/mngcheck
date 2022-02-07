@@ -49,7 +49,7 @@ class ProfileEditForm(forms.ModelForm):
         model = Profile
         fields = ('legal_entity', 'personal_acc', 'bank_name', 'bic', 'corres_acc',
                   'tax_from_client', 'tax_system_from_client', 'client_status')
-        labels = {'client_status': 'Статус клиента'}
+        labels = {'client_status': 'Статус пользователя'}
         help_texts = {
             'client_status': 'Для продления тарифов на ККТ клиентов установите статус Партнёр'
         }

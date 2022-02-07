@@ -12,12 +12,42 @@
     <form action="." method="post" enctype="multipart/form-data">
         {% bootstrap_form user_form %}
         {% bootstrap_form profile_form %}
-        {% if profile_form.client_status.value == 1 %}
-          {% bootstrap_form partner_profile_form %}
-        {% endif %}
+        {% bootstrap_form partner_profile_form %}
         {% csrf_token %}
         {% buttons %}
                 <button name="submit" class="btn btn-primary">Сохранить изменения</button>
         {% endbuttons %}
     </form>
+<script type="text/javascript">
+{% block jquery %}
+
+$(window).on('load', function() {
+          var valueSelected = '{{profile_form.client_status.value|safe}}';
+
+          if (valueSelected === '0') {
+            $('#id_inn').parent().hide();
+            $('#id_ur_adress').parent().hide();
+            $('#id_post_adress').parent().hide();
+            $('#id_contacts').parent().hide();
+          }
+        });
+
+$('#id_client_status').change(function () {
+          var optionSelected = $("option:selected", this);
+          var valueSelected = $(this).val();
+
+          if (valueSelected === '0') {
+            $('#id_inn').parent().hide();
+            $('#id_ur_adress').parent().hide();
+            $('#id_post_adress').parent().hide();
+            $('#id_contacts').parent().hide();
+          } else {
+            $('#id_inn').parent().show();
+            $('#id_ur_adress').parent().show();
+            $('#id_post_adress').parent().show();
+            $('#id_contacts').parent().show();
+          }
+        });
+{% endblock %}
+</script>
 {% endblock content %}
