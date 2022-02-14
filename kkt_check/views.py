@@ -9,7 +9,7 @@ from .models import Kkt, Check_kkt, Check_good
 from users.models import Profile
 from bot.views import send_reply_telebot, send_qr_check_telebot
 from .serializers import KktSerializer, CheckSerializer, GoodSerializer
-from .forms import KktForm, CheckForm, GoodForm
+from .forms import KktForm, CheckForm, GoodForm, GoodsFormSet
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.http.response import JsonResponse
@@ -253,17 +253,24 @@ def new_check_kkt(request, kkt_id):
     if request.method != 'POST':
         # Данные не отправлялись; создается пустая форма.
         form = CheckForm(initial=initial_dict)
+        formset = GoodsFormSet(queryset=Check_good.objects.none())
     else:
-        # Отправлены данные POST; обработать данные.
+        # Отправлены данные POST формы чека; обработать данные.
         form = CheckForm(data=request.POST)
-        if form.is_valid():
+        # Отправлены данные POST формсета товаров в чеке; обработать данные.
+        formset = GoodsFormSet(data=request.POST)
+        if form.is_valid() and formset.is_valid():
             new_check_kkt = form.save(commit=False)
             new_check_kkt.kkt = kkt
             new_check_kkt.status = "Формируется"
             new_check_kkt.save()
+            new_goods = formset.save(commit=False)
+            for good_form in new_goods:
+                good_form.check_kkt = new_check_kkt
+                good_form.save()
             return redirect('kkt_check:kkt', kkt_id=kkt_id)
     # Вывести пустую или недействительную форму.
-    context = {'kkt': kkt, 'form': form}
+    context = {'kkt': kkt, 'check_form': form, 'goods_formset': formset}
     return render(request, 'kkt_check/new_check_kkt.html', context)
 
 
@@ -275,32 +282,36 @@ def edit_check_kkt(request, check_kkt_id):
         kkt = check_kkt.kkt
     except Check_kkt.DoesNotExist:
         raise Http404
-    kkt_check_goods_val = check_kkt.checkkktset.all().values()
-    # ВЫчисляем сумму товаров и услуг в чеке
-    sum_cash_in_goods = sum((good['price'] * good['qty']) / 10000 for good in kkt_check_goods_val)
     if kkt.owner != request.user:
         raise Http404
     if request.method != 'POST':
         # Исходный запрос; форма заполняется данными текущей записи.
         form = CheckForm(instance=check_kkt)
+        formset = GoodsFormSet(queryset=check_kkt.checkkktset.all())
     else:
         # Отправка данных POST; обработать данные.
         form = CheckForm(instance=check_kkt, data=request.POST)
-        if form.is_valid():
+        # Отправлены данные POST формсета товаров в чеке; обработать данные.
+        formset = GoodsFormSet(queryset=check_kkt.checkkktset.all(), data=request.POST)
+        if form.is_valid() and formset.is_valid():
             cash = form.cleaned_data.get("cash")
             ecash = form.cleaned_data.get("ecash")
+            # ВЫчисляем сумму товаров и услуг в чеке
+            sum_cash_in_goods = 0
+            new_goods = formset.save(commit=False)
+            for good_form in new_goods:
+                good_form.check_kkt = check_kkt
+                ic(good_form.price)
+                sum_cash_in_goods += (good_form.price * good_form.qty) / 10000
+                good_form.save()
             if sum_cash_in_goods > (ecash + cash):
                 msg = "Сумма типов оплат меньше суммы позиций чека."
                 form.add_error('cash', msg)
                 form.add_error('ecash', msg)
             else:
-                # Проверяем, что товары добавлены и можно менять статус чека для его фискализации
-                if sum_cash_in_goods > 0:
-                    check_kkt.status = 'Добавлен'
                 form.save()
                 return redirect('kkt_check:kkt', kkt_id=kkt.id)
-    kkt_check_goods = check_kkt.checkkktset.all()
-    context = {'kkt_check_goods': kkt_check_goods, 'check_kkt': check_kkt, 'kkt': kkt, 'form': form}
+    context = {'goods_formset': formset, 'check_kkt': check_kkt, 'kkt': kkt, 'form': form}
     return render(request, 'kkt_check/edit_check_kkt.html', context)
 
 
@@ -317,38 +328,6 @@ def del_check_kkt(request, check_kkt_id):
     except Check_kkt.DoesNotExist:
         raise Http404
 
-
-@login_required
-def new_good_check_kkt(request, check_kkt_id):
-    """Добавляет новую позицию в конкретный чек"""
-    try:
-        check_kkt = Check_kkt.objects.get(id=check_kkt_id)
-        kkt = check_kkt.kkt
-    except Check_kkt.DoesNotExist:
-        raise Http404
-    # Получаем настройки пользователя
-    initial_dict = {'qty': 10000}
-    try:
-        profile = Profile.objects.get(user=request.user)
-        # Если в профиле стоит брать по умолчанию, то берем из настроек кассы
-        if not profile.tax_from_client:
-            initial_dict['tax_code'] = kkt.tax_code
-    except:
-        pass
-    if request.method != 'POST':
-        # Данные не отправлялись; создается пустая форма.
-        form = GoodForm(initial=initial_dict)
-    else:
-        # Отправлены данные POST; обработать данные.
-        form = GoodForm(data=request.POST)
-        if form.is_valid():
-            new_good_check_kkt = form.save(commit=False)
-            new_good_check_kkt.check_kkt = check_kkt
-            new_good_check_kkt.save()
-            return redirect('kkt_check:edit_check_kkt', check_kkt_id=check_kkt_id)
-    # Вывести пустую или недействительную форму.
-    context = {'check_kkt': check_kkt, 'form': form}
-    return render(request, 'kkt_check/new_good_check_kkt.html', context)
 
 @login_required
 def edit_good_check_kkt(request, good_check_kkt_id):
@@ -386,3 +365,29 @@ def del_good_check_kkt(request, good_check_kkt_id):
         return redirect('kkt_check:edit_check_kkt', check_kkt_id=check_kkt_id)
     except Check_good.DoesNotExist:
         raise Http404
+
+
+@login_required
+def new_good_check_kkt(request, check_kkt_id):
+    """Добавляет новую позицию в конкретный чек"""
+    try:
+        check_kkt = Check_kkt.objects.get(id=check_kkt_id)
+        kkt = check_kkt.kkt
+    except Check_kkt.DoesNotExist:
+        raise Http404
+
+    if request.method != 'POST':
+        # Данные не отправлялись; создается пустая форма.
+        formset = GoodsFormSet(queryset=Check_good.objects.none())
+    else:
+        # Отправлены данные POST; обработать данные.
+        formset = GoodsFormSet(data=request.POST)
+        if formset.is_valid():
+            new_goods = formset.save(commit=False)
+            for form in new_goods:
+                form.check_kkt = check_kkt
+                form.save()
+            return redirect('kkt_check:edit_check_kkt', check_kkt_id=check_kkt_id)
+    # Вывести пустую или недействительную форму.
+    context = {'check_kkt': check_kkt, 'goods_formset': formset}
+    return render(request, 'kkt_check/new_good_check_kkt.html', context)

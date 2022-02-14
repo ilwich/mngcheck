@@ -1,12 +1,14 @@
+<!DOCTYPE html>
 {% extends "kkt_check/base.html" %}
 {% block page_header %}
 <h1>Список подключенных кассовых аппаратов клиентов</h1>
 {% endblock page_header %}
 {% block content %}
 <form class="form-inline my-2 my-lg-0" action="{% url 'partners:seach_contract' %}" method="get">
-<input class="form-control mr-sm-2" type="search"   placeholder="Поиск" aria-label="Поиск" name="q">
+    <input class="form-control mr-sm-2" type="search"   placeholder="Поиск" aria-label="Поиск" name="q">
     <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Поиск</button>
 </form>
+
   <ul>
     {% for contract in contract_list %}
      <h3>
@@ -14,7 +16,7 @@
      </h3>
 
     {% empty %}
-      <li><h3>Клиенты ещё не добавлены.</h3></li>
+      <li><h3>Клиенты по критериям поиска не найдены.</h3></li>
     {% endfor %}
   </ul>
 <h3> <a href="{% url 'partners:new_contract' %}"> + Добавить клиента  </a></h3>

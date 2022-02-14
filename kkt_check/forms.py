@@ -1,5 +1,7 @@
 from django import forms
+from django.forms import modelformset_factory
 from .models import Kkt, Check_kkt, Check_good
+
 
 class KktForm(forms.ModelForm):
     class Meta:
@@ -30,3 +32,16 @@ class GoodForm(forms.ModelForm):
         help_texts = {
             'qty': 'Количество без точки 10000 = 1.00', 'price': 'Цена без точек в копейках'
         }
+
+
+# Описание формсета для модели номенклатуры чека
+GoodsFormSet = modelformset_factory(
+            Check_good,
+            fields=('product_name', 'qty', 'tax_code', 'price', 'product_type_code'),
+            extra=1,
+            labels={'product_name': 'Наименование товара/услуги:', 'qty': 'Количество:', 'tax_code': 'Тип ставки НДС:',
+                    'price': 'Цена:', 'product_type_code': 'Предмет расчёта:'},
+            help_texts={
+                    'qty': 'Количество без точки 10000 = 1.00', 'price': 'Цена без точек в копейках'
+            }
+        )

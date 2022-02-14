@@ -6,6 +6,7 @@ from .models import Partnerprofile, Contract, PaymentCode, CodeOrder
 from kkt_check.models import Kkt
 from users.models import Profile
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from django.http import Http404
 from mngcheck.settings import DEFAULT_FROM_EMAIL
 from icecream import ic
@@ -107,6 +108,30 @@ def del_contract(request, contract_id):
         raise Http404
     contract.delete()
     return redirect('partners:contracts')
+
+
+@login_required
+def seach_contract(request):
+    """Выводит список контрактов партнера по параметрам поиска"""
+    query_in = request.GET.get('q')
+    result_list_of_contract = []
+    # Спиок контрактов партнёра
+    contract_list = Contract.objects.filter(owner=request.user).order_by('date_added')
+    # Поиск среди кассовых аппаратов удовлетворяющих поиску
+    query = Q(inn_kkt__icontains=query_in)
+    query.add(Q(name__icontains=query_in), Q.OR)
+    query.add(Q(fn_number__icontains=query_in), Q.OR)
+    kkt_list = Kkt.objects.filter(query)
+    for contract in contract_list:
+        if contract.kkt in kkt_list:
+            result_list_of_contract.append(contract)
+    # Поиск среди клиентов удовлетворяющих поиску
+    profile_list = Profile.objects.filter(legal_entity__icontains=query_in)
+    for contract in contract_list:
+        if contract.kkt.owner.profile in profile_list:
+            result_list_of_contract.append(contract)
+    context = {'contract_list': result_list_of_contract}
+    return render(request, 'partners/seach_contract.html', context)
 
 
 @login_required

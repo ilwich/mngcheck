@@ -7,11 +7,52 @@
 </h2>
 {% endblock page_header %}
 {% block content %}
-  <form action="{% url 'kkt_check:new_check_kkt' kkt.id %}" method='post'>
+  <form id="form-container" action="{% url 'kkt_check:new_check_kkt' kkt.id %}" method='post'>
     {% csrf_token %}
-    {% bootstrap_form form %}
+    {% bootstrap_form check_form %}
+    {{goods_formset.management_form}}
+    {% for form in goods_formset %}
+            <div class="good-form">
+              <div class="card mb-3">
+                <h4 class="card-header"> Редактирование позиции в чек </h4>
+                <div class="card-body">
+                  {% bootstrap_form form %}
+                </div>
+              </div>
+            </div>
+    {% endfor %}
+    <div id="add-form">
+          {% buttons %}
+            <button  name="add" class="btn btn-primary">+ Новая позиция</button>
+          {% endbuttons %}
+    </div>
             {% buttons %}
-                <button name="submit" class="btn btn-primary">Добавить чек</button>
+                <button name="submit" class="btn btn-success">Сохранить изменения</button>
+                <a href="javascript:history.go(-1)" class="btn btn-default">
+                  <button name="cancel" class="btn btn-danger">Отмена</button>
+                </a>
             {% endbuttons %}
   </form>
+  <script>
+        let goodsForm = document.querySelectorAll(".good-form")
+        let container = document.querySelector("#form-container")
+        let addButton = document.querySelector("#add-form")
+        let totalForms = document.querySelector("#id_form-TOTAL_FORMS")
+
+        let formNum = goodsForm.length-1
+        addButton.addEventListener('click', addForm)
+
+        function addForm(e){
+            e.preventDefault()
+
+            let newForm = goodsForm[0].cloneNode(true)
+            let formRegex = RegExp(`form-(\\d){1}-`,'g')
+
+            formNum++
+            newForm.innerHTML = newForm.innerHTML.replace(formRegex, `form-${formNum}-`)
+            container.insertBefore(newForm, addButton)
+
+            totalForms.setAttribute('value', `${formNum+1}`)
+        }
+  </script>
 {% endblock content %}

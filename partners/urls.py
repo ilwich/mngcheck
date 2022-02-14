@@ -14,6 +14,8 @@ urlpatterns = [
     path('del_contract/<int:contract_id>/', views.del_contract, name='del_contract'),
     # Оплата тарифа по контракту
     path('payment_contract/<int:contract_id>/', views.payment_contract, name='payment_contract'),
+    # Список поиска контрактов партнера
+    path('contracts/seach_contract', views.seach_contract, name='seach_contract'),
     # Просмотр кодов активации
     path('view_payment_codes/', views.view_payment_codes, name='view_payment_codes'),
     # Просмотр кодов активации

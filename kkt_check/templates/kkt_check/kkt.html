@@ -2,7 +2,10 @@
 {% block page_header %}
 <h3>Касса: {{ kkt }}
     <br>
-   <small><a href="{% url 'kkt_check:edit_kkt' kkt.id %}"> Редактировать кассу</a></small>
+   <small><a href="{% url 'kkt_check:edit_kkt' kkt.id %}"> Редактировать кассу</a>
+       --
+       <a href="{% url 'kkt_check:kktlist' %}"> Отмена</a>
+   </small>
 </h3>
 {% endblock page_header %}
 {% block content %}

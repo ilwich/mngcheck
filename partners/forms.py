@@ -31,7 +31,7 @@ class PartnerProfileEditForm(forms.ModelForm):
 class NewContractForm(forms.Form):
     """Форма контракта партнера с кассой"""
     inn_kkt = forms.CharField(label='ИНН клиента', max_length=12)
-    fn_number = forms.CharField(label='Регистрационный номер кассы', max_length=16)
+    fn_number = forms.CharField(label='Заводской номер ФН кассы', max_length=16)
 
     def clean(self):
         """Проверка наличия ККТ с таким номером и ИНН"""
@@ -43,7 +43,7 @@ class NewContractForm(forms.Form):
             try:
                 kkt = Kkt.objects.get(fn_number=fn_number)
             except Kkt.DoesNotExist:
-                raise ValidationError('ККТ с таким номером не обнаружено')
+                raise ValidationError('ККТ с заводским номером ФН с таким номером не обнаружено')
             if kkt.inn_kkt != inn_kkt:
                 raise ValidationError('ИНН пользователя не соответствует номеру кассы')
 

@@ -9,8 +9,10 @@
         <div class="card-body">
             Тариф оплачен до {{ kkt.data_end_of_payment|date:'M d, Y H:i'}}
             <br>
-            <small> <a href="{% url 'partners:payment_contract' contract.id %}"> Оплатить тариф </a></small>
-            <small> --> <a href="{% url 'partners:del_contract' contract.id %}">  Удалить</a></small>
+            <small> <a href="{% url 'partners:payment_contract' contract.id %}"> Оплатить тариф </a>
+             -- <a href="{% url 'partners:del_contract' contract.id %}">  Удалить</a>
+             -- <a href="{% url 'partners:contracts' %}">  Отмена</a>
+            </small>
         </div>
         {{ contract }}
     </h4>

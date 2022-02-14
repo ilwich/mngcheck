@@ -34,12 +34,12 @@ def send_qr_check_telebot(kkt_check, reply_to_update_id):
     draw = ImageDraw.Draw(image_txt)
     color = 'Black'
     font = ImageFont.truetype(full_path_to_font_file, size=18, encoding='UTF-8')
-    draw.text((10, 10), image_txt, font=font, fill=color)
+    draw.text((10, 10), text_check, font=font, fill=color)
     # формируем qr код чека в картинку
     data_qr = kkt_check.status
     img_qr = qrcode.make(data_qr)
     # вставляем картинку qr на картинку чека
-    image_txt.paste(img_qr, (0, (image_txt.count('\n') + 1) * 21 + 20))
+    image_txt.paste(img_qr, (0, (text_check.count('\n') + 1) * 21 + 20))
     filename = f"qr_check{data_qr[2:15]}.png"
     full_path_to_qr_file = os.path.join(settings.STATICFILES_DIRS[0], filename)
     # Сохраняем результирующий файл

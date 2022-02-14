@@ -96,3 +96,16 @@ def register(request):
     # Вывести пустую или недействительную форму.
     context = {'form': form}
     return render(request, 'users/register.html', context)
+
+
+def clientinstruction(request):
+    """Инструкция пользователя."""
+    return render(request, 'users/clientinstruction.html')
+
+
+@login_required
+def partnerinstruction(request):
+    """Инструкция партнёра."""
+    if request.user.profile.client_status == 0:
+        raise Http404
+    return render(request, 'users/partnerinstruction.html')

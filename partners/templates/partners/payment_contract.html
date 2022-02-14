@@ -10,6 +10,7 @@
   {% bootstrap_form form %}
             {% buttons %}
                 <button name="submit" class="btn btn-primary">Оплатить кодом</button>
+                <a href="{% url 'partners:view_contract' contract.id %}" class="btn btn-danger">Отмена</a>
             {% endbuttons %}
 </form>
 {% endblock content %}

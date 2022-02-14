@@ -1,0 +1,91 @@
+{% extends "kkt_check/base.html" %}
+{% load bootstrap4 %}
+
+{% block page_header %}
+<h2>Инструкция для партнёра</h2>
+{% endblock page_header %}
+
+{% block content %}
+    <h3>Регистрация на сайте</h3>
+
+<p class=MsoNormal>После нажатия кнопки регистрация необходимо задать логин,
+адрес электронной почты и пароль для дальнейшего использования сервиса.<o:p></o:p></p>
+
+<p class=MsoNormal>После указания начальных реквизитов необходимо заполнить
+данные профиля. Информация необходима для правильного формирования квитанции
+оплаты через <span lang=EN-US style='mso-ansi-language:EN-US'>QR</span><span
+lang=EN-US> </span>кода оплаты в приложениях банков.</p>
+
+<p class=MsoNormal>Статус партнёра позволит вам участвовать в продвижении
+КАССБОТА другим пользователям, а также настройке их <span class=GramE>оборудования<span
+style='mso-spacerun:yes'>  </span>для</span> работы с сервисом.<o:p></o:p></p>
+
+<p class=MsoNormal>Обязательно необходимо сохранить изменения </p>
+<h3>Добавление клиента</h3>
+<p class=MsoNormal>После заполнения профиля в статусе партнёр необходимо в
+разделе клиенты добавить новую запись с указанием ИНН клиента и номера
+фискального накопителя (ФН) кассы клиента.</p>
+<h3>Активация тарифа клиента</h3>
+<p class=MsoNormal>Оплата тарифа использования сервисом для кассы клиента
+возможно через механизм ввода кодов активации тарифа по ссылке <span
+class=GramE><b style='mso-bidi-font-weight:normal'><i style='mso-bidi-font-style:
+normal'>Оплатить</i></b></span><b style='mso-bidi-font-weight:normal'><i
+style='mso-bidi-font-style:normal'> тариф</i></b>.</p>
+<h3>Заказ кодов активации</h3>
+<p class=MsoNormal>Коды можно заказать через форму в разделе <b
+style='mso-bidi-font-weight:normal'><i style='mso-bidi-font-style:normal'>Коды
+активации</i></b>. На почту из профиля придёт счёт на оплату кодов. После
+фиксации оплаты сами коды будут высланы на электронную почту.<o:p></o:p></p>
+
+<h3>Служба ККТАгент</h3>
+
+<p class=MsoNormal>Служба <span class=SpellE>ККТагент</span> обеспечивает
+регулярный опрос сервиса <span class=SpellE><span lang=EN-US style='mso-ansi-language:
+EN-US'>kassbot</span></span><span lang=EN-US> </span>на наличие добавленных
+чеков для ККТ подключенных на компьютере пользователя. Служба <span
+class=SpellE>ККТагент</span> самостоятельно открывает смену на ККТ по
+необходимости провести чек. Если смена уже открыта, то проводит чек не закрывая
+смену. Если смена превысила 24 часа смена закрывается и снова открывается для
+проведения чека.<o:p></o:p></p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal>Установка службы <span class=SpellE><span lang=EN-US
+style='mso-ansi-language:EN-US'>kktagent</span></span><span lang=EN-US> </span>производится
+после запуска установки <span class=SpellE><span lang=EN-US style='mso-ansi-language:
+EN-US'>kktagentsetup</span></span><span lang=EN-US> </span>от имени
+администратора. Файлы настройки и файл <span class=SpellE>логирования</span>
+работы находится в каталоге C:\ProgramData\V_element\kktagent.</p>
+
+<p class=MsoNormal>В файлах настройки необходимо указать номер ФН кассы и
+производителя кассы. Логин от сервиса <span class=SpellE>Кассбот</span> и
+пароль находятся в разных файлах.</p>
+
+<h3>Подключение ККТ Меркурий (модели 115Ф, 130Ф, 180Ф, 185Ф)</h3>
+<p class=MsoNormal><span style='mso-spacerun:yes'> </span><span
+style='mso-spacerun:yes'> </span>Для работы с ККТ Меркурий необходима настройка
+кассы в режиме ФР с паролем кассира 0. Возможна работа в трёх режимах:</p>
+
+<p class=MsoNormal>- по проводу <span lang=EN-US style='mso-ansi-language:EN-US'>RS</span>-232
+(СОМ аппаратный)</p>
+
+<p class=MsoNormal>- по проводу <span lang=EN-US style='mso-ansi-language:EN-US'>USB</span>
+(<span lang=EN-US style='mso-ansi-language:EN-US'>VCOM</span><span lang=EN-US> </span>виртуальный
+<span lang=EN-US style='mso-ansi-language:EN-US'>COM</span>)</p>
+
+<p class=MsoNormal>- по <span lang=EN-US style='mso-ansi-language:EN-US'>Bluetooth</span><span
+lang=EN-US> </span><span lang=EN-US style='mso-ansi-language:EN-US'>SPP</span>
+(<span lang=EN-US style='mso-ansi-language:EN-US'>COM</span><span lang=EN-US> </span>создается
+службой подключения <span lang=EN-US style='mso-ansi-language:EN-US'>Bluetooth</span>)</p>
+
+<p class=MsoNormal>Необходима установка драйвера ККТ и службы <span
+class=SpellE><span lang=EN-US style='mso-ansi-language:EN-US'>Incerman</span></span>.
+В файле настроек указываются параметры KKT_MODEL = '<span class=SpellE>Incotex</span>'
+<span class=GramE>и <span style='mso-spacerun:yes'> </span>INC</span>_PORTNAME
+= 'COM7' с номером порта.</p>
+
+<p>Скачать файл установки службы ККТ агент можно по ссылке
+</p>
+<a href="https://cloud.mail.ru/public/x7Ko/ye2gX4xzD">Кассбот_SETUP</a>
+
+{% endblock %}

@@ -10,41 +10,72 @@
 {% endif %}
 {% endblock page_header %}
 {% block content %}
-    <form action="{% url 'kkt_check:edit_check_kkt' check_kkt.id %}" method='post'>
+    <form id="form-container" action="{% url 'kkt_check:edit_check_kkt' check_kkt.id %}" method='post'>
         {% csrf_token %}
         {% bootstrap_form form %}
-
+        {{goods_formset.management_form}}
+        {% for form in goods_formset %}
+            <div class="good-form">
+              <div class="card mb-3">
+                <h4 class="card-header"> Позиции номенклатуры в чек
+                  {% if form.instance.id != None %}
+                    {% if check_kkt.status == 'Добавлен' or check_kkt.status == 'Формируется' %}
+                      <small> <a href="{% url 'kkt_check:del_good_check_kkt' form.instance.id %}" class="btn btn-danger">
+                        Удалить
+                      </a> </small>
+                    {% endif %}
+                  {% endif %}
+                </h4>
+                  <div class="card-body">
+                      {% if form.instance.id != None %}
+                        {% bootstrap_form form %}
+                      {% else %}
+                        {% if check_kkt.status == 'Добавлен' or check_kkt.status == 'Формируется' %}
+                          {% bootstrap_form form %}
+                        {% endif %}
+                      {% endif %}
+                </div>
+              </div>
+            </div>
+        {% endfor %}
         {% if check_kkt.status == 'Добавлен' or check_kkt.status == 'Формируется' %}
+          <div id="add-form">
+            {% buttons %}
+              <button  name="add" class="btn btn-primary">+ Новая позиция</button>
+            {% endbuttons %}
+
+          </div>
           {% buttons %}
-                <button name="submit" class="btn btn-primary">Сохранить изменения</button>
+            <button name="submit" class="btn btn-success">Сохранить изменения</button>
+              <a href="javascript:history.go(-1)" class="btn btn-default">
+                <button name="cancel" class="btn btn-danger">Отмена</button>
+              </a>
           {% endbuttons %}
         {% else %}
           <h3><p> Редактирование запрещено статусом чека</p></h3>
         {% endif %}
-    </form>
-<p>Позиции в чеке:</p>
-<p>
-    {% if check_kkt.status == 'Добавлен' or check_kkt.status == 'Формируется' %}
-        <a href="{% url 'kkt_check:new_good_check_kkt' check_kkt.id %}">Добавить позицию в чек</a>
-    {% endif %}
-</p>
-  <ul>
-    {% for good in kkt_check_goods %}
-    <li>
-        <p>{{ good }} </p>
-        <p>{{ check.product_type_code|linebreaks }}</p>
-        <p>
-          {% if check_kkt.status == 'Добавлен'  or check_kkt.status == 'Формируется' %}
-            <a href="{% url 'kkt_check:edit_good_check_kkt' good.id %}">Редактировать</a>
-            <a href="{% url 'kkt_check:del_good_check_kkt' good.id %}">Удалить</a>
-          {% else %}
-            <a href="{% url 'kkt_check:edit_good_check_kkt' good.id %}">Просмотр</a>
-          {% endif %}
 
-        </p>
-    </li>
-   {% empty %}
-      <li>Позиции в этом чеке отсутствуют</li>
-    {% endfor %}
-  </ul>
+    </form>
+  <script>
+        let goodsForm = document.querySelectorAll(".good-form")
+        let container = document.querySelector("#form-container")
+        let addButton = document.querySelector("#add-form")
+        let totalForms = document.querySelector("#id_form-TOTAL_FORMS")
+
+        let formNum = goodsForm.length-1
+        addButton.addEventListener('click', addForm)
+
+        function addForm(e){
+            e.preventDefault()
+
+            let newForm = goodsForm[0].cloneNode(true)
+            let formRegex = RegExp(`form-(\\d){1}-`,'g')
+
+            formNum++
+            newForm.innerHTML = newForm.innerHTML.replace(formRegex, `form-${formNum}-`)
+            container.insertBefore(newForm, addButton)
+
+            totalForms.setAttribute('value', `${formNum+1}`)
+        }
+  </script>
 {% endblock content %}
