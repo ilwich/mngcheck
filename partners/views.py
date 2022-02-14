@@ -12,6 +12,7 @@ from mngcheck.settings import DEFAULT_FROM_EMAIL
 from icecream import ic
 
 
+
 def payment_code_generator(user, num_codes, mounth_payment_count):  # Возвращает список кодов
     """Генератор кодов оплаты для пртнера"""
     i = 0
@@ -88,7 +89,7 @@ def view_contract(request, contract_id):
     """Просмотр существующего клиента у партнера."""
     try:
         contract = Contract.objects.get(id=contract_id)
-    except contract.DoesNotExist:
+    except Contract.DoesNotExist:
         raise Http404
     if contract.owner != request.user:
         raise Http404
