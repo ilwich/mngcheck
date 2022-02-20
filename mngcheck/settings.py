@@ -38,9 +38,9 @@ else:
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True if os.environ.get("No_DEBUG") is None else False
+DEBUG = True if os.environ.get("No_DEBUG") == 'True' else False
 
-ALLOWED_HOSTS = ["web", "127.0.0.1"] if os.environ.get("NODEBUG") is None else ["178.21.8.107", "kassbot.website"]
+ALLOWED_HOSTS = ["web", "127.0.0.1"] if os.environ.get("No_DEBUG") == 'True' else ["178.21.8.107", "kassbot.website"]
 
 
 

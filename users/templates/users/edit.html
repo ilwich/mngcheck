@@ -16,6 +16,7 @@
         {% csrf_token %}
         {% buttons %}
                 <button name="submit" class="btn btn-primary">Сохранить изменения</button>
+                <a href="javascript:history.go(-1)" class="btn btn-danger">Отмена</a>
         {% endbuttons %}
     </form>
 <script type="text/javascript">

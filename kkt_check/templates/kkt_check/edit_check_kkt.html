@@ -52,6 +52,9 @@
               </a>
           {% endbuttons %}
         {% else %}
+          <a href="javascript:history.go(-1)" class="btn btn-default">
+                <button name="cancel" class="btn btn-danger">Назад</button>
+          </a>
           <h3><p> Редактирование запрещено статусом чека</p></h3>
         {% endif %}
 
