@@ -1,5 +1,5 @@
-from django.http import HttpResponse, HttpResponseBadRequest
-from django.shortcuts import redirect
+from django.http import HttpResponse, HttpResponseBadRequest, Http404
+from django.shortcuts import redirect, render
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from bot.models import Botuser, Botmessage
@@ -246,3 +246,24 @@ def talkin_to_me_bruh(request):
         return HttpResponse('OK')
     else:
         return HttpResponseBadRequest('Malformed or incomplete JSON data received')
+
+
+@login_required
+def botusers_list(request):
+    """Выводит список всех телеграмм сотрудников пользователя."""
+    botuserslist = Botuser.objects.filter(owner=request.user).order_by('bot_user_id')
+    context = {'botuserslist': botuserslist}
+    return render(request, 'bot/botusers.html', context)
+
+
+@login_required
+def del_botuser(request, bot_id):
+    """Удаление существующей записи телеграмм аккаунта сотрудника."""
+    try:
+        botuser = Botuser.objects.get(bot_user_id=bot_id)
+    except Botuser.DoesNotExist:
+        raise Http404
+    if botuser.owner != request.user:
+        raise Http404
+    botuser.delete()
+    return redirect('bot:botusers_list')

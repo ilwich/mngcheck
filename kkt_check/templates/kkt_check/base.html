@@ -29,6 +29,11 @@
               Список кассовых аппаратов</a></li>
         </ul>
         <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'bot:botusers_list'%}">
+              Телеграмм сотрудники</a></li>
+        </ul>
+        <ul class="navbar-nav mr-auto">
           {% if user.is_authenticated and user.profile.client_status == 1 %}
             <li class="nav-item">
               <a class="nav-link" href="{% url 'partners:contracts'%}">
