@@ -19,6 +19,11 @@ import os
 import datetime
 import pytz
 from re import findall
+import logging
+
+
+# Create a logger for this file
+logger = logging.getLogger(__file__)
 
 
 def telegram_id_in_msg(str_in):
@@ -151,6 +156,7 @@ class GetCheckDetail((APIView)):
 
 def index(request):
     """Домашняя страница приложения kkt-check"""
+    logger.info("SomeOne visit index page")
     return render(request, 'kkt_check/index.html')
 
 
@@ -169,6 +175,7 @@ def kkt(request, kkt_id):
     try:
         kkt = Kkt.objects.get(id=kkt_id)
     except Kkt.DoesNotExist:
+        logger.exception(f"KKt with {kkt_id} do not exist.")
         raise Http404
     # Проверка того, что ккт принадлежит текущему пользователю.
     if kkt.owner != request.user:
