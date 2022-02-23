@@ -168,7 +168,7 @@ def kktlist(request):
     set_in = {
         'domain': settings.DEFAULT_DOMAIN,
         'debug': settings.DEBUG,
-        'host': settings.ALLOWED_HOSTS,
+        'host': settings.ALLOWED_HOST,
         'no_debug': os.environ.get("No_DEBUG"),
         'in_server': os.environ.get("IN_SERVER")
     }
