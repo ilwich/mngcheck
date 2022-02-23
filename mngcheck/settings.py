@@ -74,7 +74,7 @@ if os.environ.get("IN_SERVER"):
             },
         },
         "loggers": {
-            "django": {
+            "": {
                 "handlers": ["file"],
                 "level": "INFO",
                 "propagate": True

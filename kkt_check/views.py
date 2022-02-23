@@ -165,16 +165,7 @@ def index(request):
 def kktlist(request):
     """Выводит список касс."""
     kkt_list = Kkt.objects.filter(owner=request.user).order_by('date_added')
-    set_in = {
-        'domain': settings.DEFAULT_DOMAIN,
-        'debug': settings.DEBUG,
-        'host': settings.ALLOWED_HOSTS,
-        'no_debug': os.environ.get("No_DEBUG"),
-        'in_server': os.environ.get("IN_SERVER")
-    }
-    ic(set_in)
     context = {'kkt_list': kkt_list}
-
     return render(request, 'kkt_check/kktlist.html', context)
 
 
