@@ -62,6 +62,25 @@ if os.environ.get("IN_SERVER"):
             'PORT': '5432',
         }
     }
+    LOGGING_CONFIG = None
+    logging.config.dictConfig({
+        'version': 1,
+        'disable_existing_loggers': False,
+        'handlers': {
+            'file': {
+                'level': 'INFO',
+                'class': 'logging.FileHandler',
+                'filename': '/var/log/django.log',
+            },
+        },
+        'loggers': {
+            'django': {
+                'handlers': ['file'],
+                'level': 'INFO',
+                'propagate': True,
+            },
+        },
+    })
 else:
     DEFAULT_DOMAIN = 'http://{}:8000'.format(ALLOWED_HOSTS[1])
     DATABASES = {
