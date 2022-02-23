@@ -168,12 +168,12 @@ def kktlist(request):
     set_in = {
         'domain': settings.DEFAULT_DOMAIN,
         'debug': settings.DEBUG,
-        'host': settings.ALLOWED_HOST,
+        'host': settings.ALLOWED_HOSTS,
         'no_debug': os.environ.get("No_DEBUG"),
         'in_server': os.environ.get("IN_SERVER")
     }
-
-    context = {'kkt_list': kkt_list, 'set_in': set_in}
+    ic(set_in)
+    context = {'kkt_list': kkt_list}
 
     return render(request, 'kkt_check/kktlist.html', context)
 

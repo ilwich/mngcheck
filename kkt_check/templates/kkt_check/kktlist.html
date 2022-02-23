@@ -13,12 +13,5 @@
       <li><h3>Кассы ещё не добавлены.</h3></li>
     {% endfor %}
   </ul>
-<p>
-   DEBUG {{set_in.debug}}
-   DOMAIN {{set_in.domain}}
-   HOST {{set_in.host}}
-    NO_DEBUG {{set_in.no_debug}}
-    IN_SERVER {{set_in.in_server}}
-</p>
 <h3> <a href="{% url 'kkt_check:new_kkt' %}"> + Добавить кассу  </a></h3>
 {% endblock content %}
