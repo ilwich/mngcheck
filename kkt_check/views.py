@@ -167,6 +167,7 @@ def kktlist(request):
     kkt_list = Kkt.objects.filter(owner=request.user).order_by('date_added')
     context = {'kkt_list': kkt_list}
     ic(settings.LOGGING)
+    ic(settings.DATABASES)
     return render(request, 'kkt_check/kktlist.html', context)
 
 
