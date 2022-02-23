@@ -63,28 +63,23 @@ if os.environ.get("IN_SERVER"):
     }
     LOGGING = {
         'version': 1,
-        'disable_existing_loggers': True,
+        'disable_existing_loggers': False,
         'handlers': {
             'file': {
                 'level': 'INFO',
                 'class': 'logging.FileHandler',
                 'filename': '/var/log/dokku/apps/django.log',
-                'formatter': 'app',
             },
         },
         'loggers': {
             'django': {
                 'handlers': ['file'],
+                'level': 'INFO',
                 'propagate': True,
             },
         },
-        'formatters': {
-            'app': {
-                'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
-                'style': '{'
-            },
-        },
     }
+
 else:
     DEFAULT_DOMAIN = 'http://{}:8000'.format(ALLOWED_HOSTS[1])
     DATABASES = {
