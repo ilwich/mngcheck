@@ -62,7 +62,7 @@ if os.environ.get("IN_SERVER"):
         }
     }
     LOGGING = {
-        'version': 1,
+        'version': 2,
         'disable_existing_loggers': True,
         'handlers': {
             'file': {
