@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from pathlib import Path
 import django_heroku
+from icecream import ic
 
 import rest_framework.permissions
 
@@ -38,7 +39,7 @@ else:
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False if os.environ.get("No_DEBUG")==True else True
+DEBUG = False if os.environ.get("No_DEBUG") == True else True
 
 ALLOWED_HOSTS = ["web", "127.0.0.1"] if os.environ.get("IN_SERVER") == False else ["178.21.8.107", "kassbot.website"]
 

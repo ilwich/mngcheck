@@ -20,6 +20,7 @@ import datetime
 import pytz
 from re import findall
 import logging
+from django.conf import settings
 
 
 # Create a logger for this file
@@ -164,7 +165,15 @@ def index(request):
 def kktlist(request):
     """Выводит список касс."""
     kkt_list = Kkt.objects.filter(owner=request.user).order_by('date_added')
-    context = {'kkt_list': kkt_list}
+    set_in = {
+        'domain': settings.DEFAULT_DOMAIN,
+        'debug': settings.DEBUG,
+        'host': settings.ALLOWED_HOSTS,
+        'no_debug': os.environ.get("No_DEBUG"),
+        'in_server': os.environ.get("IN_SERVER")
+    }
+
+    context = {'kkt_list': kkt_list, 'set_in': set_in}
 
     return render(request, 'kkt_check/kktlist.html', context)
 
