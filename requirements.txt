@@ -29,13 +29,16 @@ psycopg2==2.9.2
 psycopg2-binary==2.9.2
 Pygments==2.10.0
 python-dateutil==2.8.2
+python-http-client==3.3.5
 pytz==2021.3
 qrcode==7.3.1
 requests==2.26.0
 s3transfer==0.5.0
+sendgrid==6.9.5
 six==1.16.0
 soupsieve==2.3.1
 sqlparse==0.4.2
+starkbank-ecdsa==2.0.3
 telepot==12.7
 typing_extensions==4.0.1
 urllib3==1.26.7
