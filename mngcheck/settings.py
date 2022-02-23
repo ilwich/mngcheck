@@ -70,7 +70,7 @@ if os.environ.get("IN_SERVER"):
             'file': {
                 'level': 'INFO',
                 'class': 'logging.FileHandler',
-                'filename': '/var/log/dokku/mngcheck/django.log',
+                'filename': '/var/log/app/django.log',
             },
         },
         'loggers': {
