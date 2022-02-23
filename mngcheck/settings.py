@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from pathlib import Path
 import django_heroku
+import logging.config
 from icecream import ic
 
 import rest_framework.permissions
@@ -61,9 +62,10 @@ if os.environ.get("IN_SERVER"):
             'PORT': '5432',
         }
     }
-    LOGGING = {
-        'version': 2,
-        'disable_existing_loggers': True,
+    LOGGING_CONFIG = None
+    logging.config.dictConfig({
+        'version': 1,
+        'disable_existing_loggers': False,
         'handlers': {
             'file': {
                 'level': 'INFO',
@@ -78,7 +80,7 @@ if os.environ.get("IN_SERVER"):
                 'propagate': True,
             },
         },
-    }
+    })
 
 else:
     DEFAULT_DOMAIN = 'http://{}:8000'.format(ALLOWED_HOSTS[1])
