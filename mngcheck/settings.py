@@ -70,7 +70,7 @@ if os.environ.get("IN_SERVER"):
             'file': {
                 'level': 'INFO',
                 'class': 'logging.handlers.RotatingFileHandler',
-                'filename': os.path.join('/mngcheck/log/', 'django_log.txt'),
+                'filename': os.path.join(BASE_DIR, '/mngcheck/log/django_log.txt'),
                 'maxBytes': 1024*1024*15, # 15MB
                 'backupCount': 10,
             },
