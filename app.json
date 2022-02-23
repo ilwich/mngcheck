@@ -2,13 +2,13 @@
     "dokku": {
       "volumes": [
         {
-          "host": "/var/lib/dokku/data/storage/$APP/log",
+          "host": "/var/lib/dokku/data/storage/mngcheck/log",
           "app": "/app/log",
           "phases": "deploy,run"
         },
         {
-          "host": "/var/lib/dokku/data/storage/$APP/staticfiles",
-          "app": "/app/staticfiles",
+          "host": "/var/lib/dokku/data/storage/mngcheck/staticfiles",
+          "app": "/staticfiles",
           "phases": "deploy,run"
         }
       ]
