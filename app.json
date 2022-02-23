@@ -1,4 +1,18 @@
 {
+    "dokku": {
+      "volumes": [
+        {
+          "host": "/var/lib/dokku/data/storage/$APP/log",
+          "app": "/app/log",
+          "phases": "deploy,run"
+        },
+        {
+          "host": "/var/lib/dokku/data/storage/$APP/staticfiles",
+          "app": "/app/staticfiles",
+          "phases": "deploy,run"
+        }
+      ]
+  },
   "scripts": {
     "dokku": {
       "predeploy": "python manage.py collectstatic --noinput"
