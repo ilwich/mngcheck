@@ -166,6 +166,7 @@ def kktlist(request):
     """Выводит список касс."""
     kkt_list = Kkt.objects.filter(owner=request.user).order_by('date_added')
     context = {'kkt_list': kkt_list}
+    ic(settings.LOGGING)
     return render(request, 'kkt_check/kktlist.html', context)
 
 
