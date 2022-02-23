@@ -23,7 +23,7 @@ import logging
 
 
 # Create a logger for this file
-logger = logging.getLogger(__file__)
+logger = logging.getLogger(__name__)
 
 
 def telegram_id_in_msg(str_in):

@@ -31,20 +31,20 @@ STATICFILES_DIRS = [
 
 
 # Секретный ключ джанго берем из окружения при запуске на сервере
-if os.environ.get("IN_SERVER"):
+if os.environ.get("IN_SERVER") == True:
     SECRET_KEY = os.environ.get("SECRET_KEY")
 else:
     SECRET_KEY = 'django-insecure-8fz9)#1la2o+1rfr!jo1j*+skk(3zq4b_++xb@c!p%(zy*r$zo'
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False if os.environ.get("No_DEBUG") else True
+DEBUG = False if os.environ.get("No_DEBUG")==True else True
 
 ALLOWED_HOSTS = ["web", "127.0.0.1"] if os.environ.get("IN_SERVER") == False else ["178.21.8.107", "kassbot.website"]
 
 
 
-if os.environ.get("IN_SERVER"):
+if os.environ.get("IN_SERVER") == True:
     # Stuff for when running in Docker-compose.
     DEFAULT_DOMAIN = 'https://{}'.format('kassbot.website')
     #CELERY_BROKER_URL = 'redis://redis:6379/1'
@@ -68,7 +68,7 @@ if os.environ.get("IN_SERVER"):
             "file": {
                 "level": "INFO",
                 "class": "logging.FileHandler",
-                "filename": "/var/log/django.log",
+                "filename": "/var/log/dokku/apps/django.log",
                 "formatter": "app",
             },
         },
