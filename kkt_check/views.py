@@ -24,7 +24,7 @@ from django.conf import settings
 
 
 # Create a logger for this file
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('django')
 
 
 def telegram_id_in_msg(str_in):
@@ -166,8 +166,6 @@ def kktlist(request):
     """Выводит список касс."""
     kkt_list = Kkt.objects.filter(owner=request.user).order_by('date_added')
     context = {'kkt_list': kkt_list}
-    ic(settings.LOGGING)
-    ic(settings.DATABASES)
     return render(request, 'kkt_check/kktlist.html', context)
 
 
