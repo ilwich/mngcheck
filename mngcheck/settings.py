@@ -22,6 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
+LOG_URL = '/log/'
 
 # Extra places for collectstatic to find static files.
 STATICFILES_DIRS = [
@@ -70,7 +71,7 @@ if os.environ.get("IN_SERVER"):
             'file': {
                 'level': 'INFO',
                 'class': 'logging.handlers.RotatingFileHandler',
-                'filename': os.path.join(BASE_DIR, '/app/log/django_log.txt'),
+                'filename': os.path.join(LOG_URL, 'djangolog.txt'),
                 'maxBytes': 1024*1024*15, # 15MB
                 'backupCount': 10,
             },
