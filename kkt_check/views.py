@@ -179,6 +179,7 @@ def kkt(request, kkt_id):
         raise Http404
     # Проверка того, что ккт принадлежит текущему пользователю.
     if kkt.owner != request.user:
+        logger.error(f"User {request.user} retry to get kkt of {kkt.owner}")
         raise Http404
     kkt_checks = kkt.check_kkt_set.order_by('-date_added')
     context = {'kkt': kkt, 'kkt_checks': kkt_checks}
