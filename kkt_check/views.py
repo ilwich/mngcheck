@@ -175,7 +175,7 @@ def kkt(request, kkt_id):
     try:
         kkt = Kkt.objects.get(id=kkt_id)
     except Kkt.DoesNotExist:
-        logger.exception(f"KKt with {kkt_id} do not exist.")
+        logger.exception(f"KKt with {kkt_id} do not exist")
         raise Http404
     # Проверка того, что ккт принадлежит текущему пользователю.
     if kkt.owner != request.user:
