@@ -73,7 +73,7 @@ if os.environ.get("IN_SERVER"):
                 'level': 'INFO',
                 'class': 'logging.handlers.RotatingFileHandler',
                 'filename': os.path.join('/app/log/', 'djangolog.txt'),
-                'maxBytes': 1024*1024*15, # 15MB
+                'maxBytes': 1024*1024*15,   # 15MB
                 'backupCount': 10,
             },
         },
