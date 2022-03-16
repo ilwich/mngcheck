@@ -14,7 +14,9 @@ def fn_number_in_msg(str_in):
     pattern = '(\d{16})'
     res = findall(pattern, str_in)
     if res:
-        return res[0]
+        for el in res:
+            if el[0] == '9':
+                return el
     else:
         return False
 
