@@ -172,7 +172,8 @@ class Check_kkt(models.Model):
         if 't=' in self.status:
             # дата из строки статуса чека
             dt = self.status[2:15]
-            res_text_list.append(f'СНО: {tax_system[0]}      {dt[9:11]}:{dt[11:]} {dt[6:8]}-{dt[4:6]}-{dt[:4]}')
+            res_text_list.append(f'СНО: {tax_system[0]}')
+            res_text_list.append(f'{dt[9:11]}:{dt[11:]} {dt[6:8]}-{dt[4:6]}-{dt[:4]}')
         else:
             res_text_list.append(f'СНО: {tax_system[0]}')
         return '\n'.join(res_text_list)
