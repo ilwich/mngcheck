@@ -253,7 +253,7 @@ def new_check_kkt(request, kkt_id):
     initial_dict = {}
     try:
         profile = Profile.objects.get(user=request.user)
-        # Проверяем установку в профиле для назначения системы нологообложения в чек
+        # Проверяем установку в профиле для назначения системы налогообложения в чек
         if not profile.tax_system_from_client:
             initial_dict['tax_system'] = kkt.tax_system
     except:
@@ -268,15 +268,29 @@ def new_check_kkt(request, kkt_id):
         # Отправлены данные POST формсета товаров в чеке; обработать данные.
         formset = GoodsFormSet(data=request.POST)
         if form.is_valid() and formset.is_valid():
+            # Значение полей оплаты чека наличные и безналичные
+            cash = form.cleaned_data.get("cash")
+            ecash = form.cleaned_data.get("ecash")
             new_check_kkt = form.save(commit=False)
             new_check_kkt.kkt = kkt
-            new_check_kkt.status = "Формируется"
-            new_check_kkt.save()
+            new_goods = formset.save(commit=False)
+            sum_cash_in_goods = 0
             new_goods = formset.save(commit=False)
             for good_form in new_goods:
-                good_form.check_kkt = new_check_kkt
-                good_form.save()
-            return redirect('kkt_check:kkt', kkt_id=kkt_id)
+                sum_cash_in_goods += (good_form.price * good_form.qty) / 10000
+            if sum_cash_in_goods > (ecash + cash):
+                msg = "Сумма типов оплат меньше суммы позиций чека."
+                form.add_error('cash', msg)
+                form.add_error('ecash', msg)
+            else:
+                #  Если оплаты хватает сохраняем чек
+                new_check_kkt.status = "Формируется"
+                new_check_kkt.save()
+                form.save()
+                for good_form in new_goods:
+                    good_form.check_kkt = new_check_kkt
+                    good_form.save()
+                return redirect('kkt_check:kkt', kkt_id=kkt_id)
     # Вывести пустую или недействительную форму.
     context = {'kkt': kkt, 'check_form': form, 'goods_formset': formset}
     return render(request, 'kkt_check/new_check_kkt.html', context)
@@ -309,18 +323,41 @@ def edit_check_kkt(request, check_kkt_id):
             new_goods = formset.save(commit=False)
             for good_form in new_goods:
                 good_form.check_kkt = check_kkt
-                ic(good_form.price)
-                sum_cash_in_goods += (good_form.price * good_form.qty) / 10000
-                good_form.save()
+                price = good_form.cleaned_data.get('price')
+                qty = good_form.cleaned_data.get('qty')
+                sum_cash_in_goods += (price * qty) / 10000
+            for goods in check_kkt.checkkktset.all():
+                sum_cash_in_goods += (goods.price * goods.qty) / 10000
             if sum_cash_in_goods > (ecash + cash):
                 msg = "Сумма типов оплат меньше суммы позиций чека."
                 form.add_error('cash', msg)
                 form.add_error('ecash', msg)
             else:
+                #  Если оплаты хватает сохраняем чек
+                for good_form in new_goods:
+                    good_form.save()
                 form.save()
                 return redirect('kkt_check:kkt', kkt_id=kkt.id)
     context = {'goods_formset': formset, 'check_kkt': check_kkt, 'kkt': kkt, 'form': form}
     return render(request, 'kkt_check/edit_check_kkt.html', context)
+
+
+
+@login_required
+def fisk_check_kkt(request, check_kkt_id):
+    """Регистрация чека в существующей кассе."""
+    try:
+        check_kkt = Check_kkt.objects.get(id=check_kkt_id)
+        kkt_id = check_kkt.kkt.id
+        if check_kkt.kkt.owner != request.user:
+            raise Http404
+        if 'Формируется' in check_kkt.status:
+            check_kkt.status = 'Добавлен'
+            check_kkt.save()
+        return redirect('kkt_check:kkt', kkt_id=kkt_id)
+    except Check_kkt.DoesNotExist:
+        raise Http404
+
 
 
 @login_required

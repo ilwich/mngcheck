@@ -17,8 +17,18 @@
       <div class="card mb-3">
         <h4 class="card-header">
           Создан {{ check.date_added|date:'M d, Y H:i' }} - {{ check }}
-          <small> <a href="{% url 'kkt_check:edit_check_kkt' check.id %}">Редактировать</a></small>
-            -- <small> <a href="{% url 'kkt_check:del_check_kkt' check.id %}">Удалить чек</a></small>
+          {% if check_kkt.status == 'Добавлен' or 'Формируется' in check.status %}
+            <small> <a href="{% url 'kkt_check:edit_check_kkt' check.id %}">Редактировать</a></small>
+            --
+          {% else %}
+            <small> <a href="{% url 'kkt_check:edit_check_kkt' check.id %}">Просмотр</a></small>
+            --
+          {% endif %}
+          {% if 'Формируется' in check.status %}
+            <small> <a href="{% url 'kkt_check:fisk_check_kkt' check.id %}"> Фискализировать</a></small>
+            --
+          {% endif %}
+            <small> <a href="{% url 'kkt_check:del_check_kkt' check.id %}"> Удалить чек</a></small>
           <div class="card-body">
               {% if 't=' in check.status  %}
                 Статус : Проведен на кассе {{ check.status|slice:"2:15"|linebreaks }}

@@ -19,7 +19,7 @@
               <div class="card mb-3">
                 <h4 class="card-header"> Позиции номенклатуры в чек
                   {% if form.instance.id != None %}
-                    {% if check_kkt.status == 'Добавлен' or check_kkt.status == 'Формируется' %}
+                    {% if check_kkt.status == 'Добавлен' or 'Формируется' in check_kkt.status %}
                       <small> <a href="{% url 'kkt_check:del_good_check_kkt' form.instance.id %}" class="btn btn-danger">
                         Удалить
                       </a> </small>
@@ -30,7 +30,7 @@
                       {% if form.instance.id != None %}
                         {% bootstrap_form form %}
                       {% else %}
-                        {% if check_kkt.status == 'Добавлен' or check_kkt.status == 'Формируется' %}
+                        {% if check_kkt.status == 'Добавлен' or 'Формируется' in check_kkt.status%}
                           {% bootstrap_form form %}
                         {% endif %}
                       {% endif %}
@@ -38,7 +38,7 @@
               </div>
             </div>
         {% endfor %}
-        {% if check_kkt.status == 'Добавлен' or check_kkt.status == 'Формируется' %}
+        {% if check_kkt.status == 'Добавлен' or 'Формируется' in check_kkt.status %}
           <div id="add-form">
             {% buttons %}
               <button  name="add" class="btn btn-primary">+ Новая позиция</button>

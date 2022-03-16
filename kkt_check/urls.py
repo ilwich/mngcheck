@@ -23,6 +23,8 @@ urlpatterns = [
     path('new_check_kkt/<int:kkt_id>/', views.new_check_kkt, name='new_check_kkt'),
     # Страница для редактирования чека
     path('edit_check_kkt/<int:check_kkt_id>/', views.edit_check_kkt, name='edit_check_kkt'),
+    # Фискализация чека
+    path('fisk_check_kkt/<int:check_kkt_id>/', views.fisk_check_kkt, name='fisk_check_kkt'),
     # Удаление чека
     path('del_check_kkt/<int:check_kkt_id>/', views.del_check_kkt, name='del_check_kkt'),
     # Страница для добавления нового товара в чек
