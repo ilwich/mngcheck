@@ -42,7 +42,7 @@ class GetKktInfoView(APIView):
 
     def get(self, request):
         # Получаем набор всех записей из таблицы Kkt
-        queryset = Kkt.objects.order_by('date_added')
+        queryset = Kkt.objects.filter(owner=request.user).order_by('date_added')
         # Сериализуем извлечённый набор записей
         serializer_for_queryset = KktSerializer(
             instance=queryset, # Передаём набор записей
