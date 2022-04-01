@@ -148,7 +148,9 @@ class Check_kkt(models.Model):
     def get_text_of_check(self):
         """Вывод информации о чеке для проверки реквизитов"""
         res_text_list = []
-        res_text_list.append(f'ККТ {self.kkt.name}')
+        kktname = f'ККТ {self.kkt.name}'
+        # Разбиваем наименование кассы на строки по 50 символов
+        res_text_list.extend([kktname[i:i + 50] for i in range(0, len(kktname), 50)])
         res_text_list.append(f'ФН {self.kkt.fn_number}')
         res_text_list.append(f'ИНН {self.kkt.inn_kkt}  ЧЕК ПРИХОДА')
         res_text_list.append(f'Кассир {self.kkt.cashier_name}')
