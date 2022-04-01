@@ -51,7 +51,7 @@ class Kkt(models.Model):
         """Возвращает строковое представление модели."""
         # Проверяем дату оплату с текущей
         kkt_payment_status = "Действует" if self.data_end_of_payment > datetime.datetime.utcnow().replace(tzinfo=pytz.UTC) else "Не оплачен"
-        return f"Касса {self.name} С ФН № {self.fn_number} тариф: {kkt_payment_status}"
+        return f"КKT С ФН № {self.fn_number} {self.name}  тариф: {kkt_payment_status}"
 
 
 class Check_kkt(models.Model):
