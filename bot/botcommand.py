@@ -83,7 +83,7 @@ def name_and_inn_in_msg(str_in):
 
 def email_in_msg(str_in):
     """Выделяем email формата example@site.ru из сообщения"""
-    regex_mail = compile(r"([-!#-'*+/-9=?A-Z^-~]+(\.[-!#-'*+/-9=?A-Z^-~]+)*|\"([]!#-[^-~ \t]|(\\[\t -~]))+\")@([-!#-'*+/-9=?A-Z^-~]+(\.[-!#-'*+/-9=?A-Z^-~]+)*|\[[\t -Z^-~]*])")
+    regex_mail = compile(r"([-!#-'*+/-9=?A-Z^-~]+(\.[-!#-'*+/-9=?A-Z^-~]+)*|\"([]!#-[^-~ \t]|(\\[\t -~]))+\")@([-!#-'*+/-9=?A-Z^-~]+(\.[-!#-'*+/-9=?A-Z^-~]+)+|\[[\t -Z^-~]*])")
     if fullmatch(regex_mail, str_in):
         return True
     else:
@@ -134,6 +134,9 @@ def bot_menu(bot_user, msg_text):
         if kkts.count() == 0:
             return {"text": "Список касс пуст. Необходимо добавить кассу на сайте",
                     "markup": ['Чек прихода', 'Отмена']}
+        # Если одна касса то переходми на выбор номенклатуры
+        elif kkts.count() == 1:
+            bot_check_kkt(bot_user, msg_text=str(kkts[0]))
         else:
             bot_user.bot_user_status = 'Выбор кассы'
             bot_user.save()
