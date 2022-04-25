@@ -40,7 +40,7 @@ class Kkt(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     # дата окончания оплаты сервиса по кассе добавлен месяц на проблный период
     data_end_of_payment = models.DateTimeField(
-        default=datetime.datetime.utcnow().replace(tzinfo=pytz.UTC)+relativedelta(months=1))
+        default=datetime.datetime.utcnow().replace(tzinfo=pytz.UTC)+relativedelta(months=+1))
     # система налогообложения по умолчанию для чеков
     tax_system = models.CharField(choices=Taxsystem.choices, max_length=1, default='0')
     # ставка ндс по умолчанию для чеков
