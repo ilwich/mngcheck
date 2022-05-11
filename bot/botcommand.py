@@ -174,7 +174,10 @@ def bot_check_kkt(bot_user, msg_text):
             bot_user.save()
             # Запрос списка названий номенклатуры
             goods_name_choice = new_check._get_kkt_goods()
-            goods_name_choice.extend(['Отмена', 'Добавить новую'])
+            if goods_name_choice != None:
+                goods_name_choice.extend(['Отмена', 'Добавить новую'])
+            else:
+                goods_name_choice = ['Отмена', 'Добавить новую']
             return {"text": "Выберете номенклатуру",
                     "markup": goods_name_choice}
     return {"text": 'Введите номер ФН кассы',
