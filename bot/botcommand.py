@@ -136,7 +136,8 @@ def bot_menu(bot_user, msg_text):
                     "markup": ['Чек прихода', 'Отмена']}
         # Если одна касса то переходми на выбор номенклатуры
         elif kkts.count() == 1:
-            bot_check_kkt(bot_user, msg_text=str(kkts[0]))
+            return bot_check_kkt(bot_user, msg_text=str(kkts[0]))
+
         else:
             bot_user.bot_user_status = 'Выбор кассы'
             bot_user.save()
