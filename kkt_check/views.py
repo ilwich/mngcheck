@@ -11,6 +11,7 @@ from bot.views import send_reply_telebot, send_qr_check_telebot
 from .serializers import KktSerializer, CheckSerializer, GoodSerializer
 from .forms import KktForm, CheckForm, GoodForm, GoodsFormSet
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.http import Http404
 from django.http.response import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
@@ -369,6 +370,7 @@ def del_check_kkt(request, check_kkt_id):
         if check_kkt.kkt.owner != request.user:
             raise Http404
         check_kkt.delete()
+        messages.success(request, 'ЧЕК УДАЛЕН')
         return redirect('kkt_check:kkt', kkt_id=kkt_id)
     except Check_kkt.DoesNotExist:
         raise Http404

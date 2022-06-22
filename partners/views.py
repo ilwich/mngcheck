@@ -6,6 +6,7 @@ from .models import Partnerprofile, Contract, PaymentCode, CodeOrder
 from kkt_check.models import Kkt
 from users.models import Profile
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.db.models import Q
 from django.http import Http404
 from mngcheck.settings import DEFAULT_FROM_EMAIL
@@ -151,11 +152,16 @@ def payment_contract(request, contract_id):
             # Получение проверенного кода из формы
             code = form.cleaned_data.get('payment_code')
             # Поиск кода в БД
-            payment_code = PaymentCode.objects.get(code=code)
+            try:
+                payment_code = PaymentCode.objects.get(code=code)
+            except :
+                messages.error(request, 'Код активации тарифа недействителен.')
+                return redirect('partners:view_contract', contract_id=contract.id)
             # Оплата контракта
             contract.pay_contract(payment_code.mounth_payment_count)
             contract.save()
             payment_code.delete()
+            messages.success(request, 'Код активации использован.')
             return redirect('partners:view_contract', contract_id=contract.id)
     else:
         form = PaymentContractForm()
@@ -195,6 +201,7 @@ def make_oder(request):
                 new_order.mounth_payment_count = mounth_payment_count
                 new_order.code_count = num_code
                 new_order.save()
+                messages.success(request, f'Заявка на {num_code} кодов принята.')
             return redirect('partners:view_payment_codes')
     else:
         form = MakeCodeOrderForm()
