@@ -53,7 +53,7 @@ ALLOWED_HOSTS = ["web", "127.0.0.1"] if os.environ.get("IN_SERVER") is None else
 if os.environ.get("IN_SERVER"):
     # Stuff for when running in Docker-compose.
     DEFAULT_DOMAIN = 'https://{}'.format(ALLOWED_HOSTS[1])
-    REDIS_HOST = 'redis'
+    REDIS_HOST = '127.0.0.1'
     REDIS_PORT = '6379'
     #CELERY_BROKER_URL = 'redis://redis:6379/1'
     #CELERY_RESULT_BACKEND = 'redis://redis:6379/1'
