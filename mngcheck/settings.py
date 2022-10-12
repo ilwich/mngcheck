@@ -237,9 +237,9 @@ SERVER_EMAIL = 'buh@5element35.ru'
 
 # REDIS related settings
 
-CELERY_BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT
+CELERY_BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT+'/0'
 CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
-CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT
+CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT+'/0'
 
 
 # Мои настройки
