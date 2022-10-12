@@ -34,9 +34,11 @@ STATICFILES_DIRS = [
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 
+
 # Секретный ключ джанго берем из окружения при запуске на сервере
 if os.environ.get("IN_SERVER"):
     SECRET_KEY = os.environ.get("SECRET_KEY")
+
 else:
     SECRET_KEY = 'django-insecure-8fz9)#1la2o+1rfr!jo1j*+skk(3zq4b_++xb@c!p%(zy*r$zo'
 
@@ -51,6 +53,8 @@ ALLOWED_HOSTS = ["web", "127.0.0.1"] if os.environ.get("IN_SERVER") is None else
 if os.environ.get("IN_SERVER"):
     # Stuff for when running in Docker-compose.
     DEFAULT_DOMAIN = 'https://{}'.format(ALLOWED_HOSTS[1])
+    REDIS_HOST = 'redis'
+    REDIS_PORT = '6379'
     #CELERY_BROKER_URL = 'redis://redis:6379/1'
     #CELERY_RESULT_BACKEND = 'redis://redis:6379/1'
 
@@ -94,6 +98,8 @@ if os.environ.get("IN_SERVER"):
     })
 else:
     DEFAULT_DOMAIN = 'http://{}:8000'.format(ALLOWED_HOSTS[1])
+    REDIS_HOST = '127.0.0.1'
+    REDIS_PORT = '6379'
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -183,15 +189,18 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
-USE_L10N = True
+USE_L10N = False
 
 USE_TZ = True
+
+LANGUAGE_CODE = 'ru-RU'
+
+# Пример вывода: 16 сентября 2012
+DATE_FORMAT = 'd E Y'
 
 
 # Static files (CSS, JavaScript, Images)
@@ -221,10 +230,17 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.mail.ru'
 EMAIL_PORT = 2525
 EMAIL_HOST_USER = 'buh@5element35.ru'
-EMAIL_HOST_PASSWORD = 'Buh_388364'
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASS")
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'buh@5element35.ru'
 SERVER_EMAIL = 'buh@5element35.ru'
+
+# REDIS related settings
+
+CELERY_BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT
+CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
+CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT
+
 
 # Мои настройки
 LOGIN_URL = '/users/login/'

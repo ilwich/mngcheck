@@ -316,17 +316,22 @@ def edit_check_kkt(request, check_kkt_id):
         form = CheckForm(instance=check_kkt, data=request.POST)
         # Отправлены данные POST формсета товаров в чеке; обработать данные.
         formset = GoodsFormSet(queryset=check_kkt.checkkktset.all(), data=request.POST)
+
         if form.is_valid() and formset.is_valid():
             cash = form.cleaned_data.get("cash")
             ecash = form.cleaned_data.get("ecash")
             # ВЫчисляем сумму товаров и услуг в чеке
             sum_cash_in_goods = 0
             new_goods = formset.save(commit=False)
+            # формы новых позиций добавленных при редактировании
             for good_form in new_goods:
+                # если данные новых позиций внесены, то сохраняем
+
                 good_form.check_kkt = check_kkt
-                price = good_form.cleaned_data.get('price')
-                qty = good_form.cleaned_data.get('qty')
-                sum_cash_in_goods += (price * qty) / 10000
+                price = good_form.price
+                qty = good_form.qty
+                if price:
+                    sum_cash_in_goods += (price * qty) / 10000
             for goods in check_kkt.checkkktset.all():
                 sum_cash_in_goods += (goods.price * goods.qty) / 10000
             if sum_cash_in_goods > (ecash + cash):
@@ -335,8 +340,7 @@ def edit_check_kkt(request, check_kkt_id):
                 form.add_error('ecash', msg)
             else:
                 #  Если оплаты хватает сохраняем чек
-                for good_form in new_goods:
-                    good_form.save()
+                formset.save()
                 form.save()
                 return redirect('kkt_check:kkt', kkt_id=kkt.id)
     context = {'goods_formset': formset, 'check_kkt': check_kkt, 'kkt': kkt, 'form': form}
