@@ -53,6 +53,7 @@ ALLOWED_HOSTS = ["web", "127.0.0.1"] if os.environ.get("IN_SERVER") is None else
 if os.environ.get("IN_SERVER"):
     # Stuff for when running in Docker-compose.
     DEFAULT_DOMAIN = 'https://{}'.format(ALLOWED_HOSTS[1])
+    REDIS_PASS = ':'+'8d003412636c27bf33df1c0ae1379af0ca4f08a19eca09cc44a1008935e058e9'+'@'
     REDIS_HOST = '172.17.0.4'
     REDIS_PORT = '6379'
     #CELERY_BROKER_URL = 'redis://redis:6379/1'
@@ -98,6 +99,7 @@ if os.environ.get("IN_SERVER"):
     })
 else:
     DEFAULT_DOMAIN = 'http://{}:8000'.format(ALLOWED_HOSTS[1])
+    REDIS_PASS = ''
     REDIS_HOST = '127.0.0.1'
     REDIS_PORT = '6379'
     DATABASES = {
@@ -237,7 +239,7 @@ SERVER_EMAIL = 'buh@5element35.ru'
 
 # REDIS related settings
 
-CELERY_BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT+'/0'
+CELERY_BROKER_URL = 'redis://' + REDIS_PASS + REDIS_HOST + ':' + REDIS_PORT+'/0'
 CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
 CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT+'/0'
 
