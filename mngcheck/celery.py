@@ -15,8 +15,12 @@ app.config_from_object('django.conf:settings', namespace="CELERY")
 app.autodiscover_tasks(lambda: [n.name for n in apps.get_app_configs()])
 
 app.conf.beat_schedule = {
-    'send-report-every-single-minute': {
+    'send-report-send_view_count_report': {
         'task': 'kkt_check.tasks.send_view_count_report',
+        'schedule': crontab(minute=0, hour='9'),  # every three hours ,3,6,9,12,15,18,21
+    },
+    'send-report-send_contact_count_report': {
+        'task': 'kkt_check.tasks.send_contact_count_report',
         'schedule': crontab(minute=0, hour='9'),  # every three hours ,3,6,9,12,15,18,21
     },
 }
