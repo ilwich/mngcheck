@@ -53,8 +53,12 @@ class Contract(models.Model):
 
     def pay_contract(self, mounth_payment_count):
         """Продление контракта на количество месяцев"""
-        # Увеличение даты на количество месяцев тарифа
-        self.date_end_payment += relativedelta(months=mounth_payment_count)
+        # Увеличение даты на количество месяцев тарифа если не окончился тариф то к дате окончания иначе к текущей
+        if self.date_end_payment > datetime.datetime.utcnow().replace(tzinfo=pytz.UTC):
+            self.date_end_payment += relativedelta(months=mounth_payment_count)
+        else:
+            self.date_end_payment = datetime.datetime.utcnow().replace(tzinfo=pytz.UTC) + \
+                                    relativedelta(months=mounth_payment_count)
         # Смена статуса контракта
         self.payment_status = 'Действует'
         self.save()
