@@ -57,7 +57,9 @@ class Contract(models.Model):
         self.date_end_payment += relativedelta(months=mounth_payment_count)
         # Смена статуса контракта
         self.payment_status = 'Действует'
+        self.save()
         # Смена даты оплаты тарифа кассы
+
         self.kkt.data_end_of_payment = self.date_end_payment
         self.kkt.save()
 

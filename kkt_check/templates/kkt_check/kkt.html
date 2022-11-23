@@ -9,6 +9,8 @@
 </h3>
 {% endblock page_header %}
 {% block content %}
+{% load tz %}
+{% localtime on %}
 <h3>Чеки:
   <small><a href="{% url 'kkt_check:new_check_kkt' kkt.id %}">Добавить чек</a></small>
 </h3>
@@ -16,7 +18,7 @@
     {% for check in kkt_checks|slice:":10" %}
       <div class="card mb-3">
         <h4 class="card-header">
-          Создан {{ check.date_added|date:'M d, Y H:i' }} - {{ check }}
+          Создан {{ check.date_added|date:'d M, Y H:i' }} - {{ check }}
           {% if check_kkt.status == 'Добавлен' or 'Формируется' in check.status %}
             <small> <a href="{% url 'kkt_check:edit_check_kkt' check.id %}">Редактировать</a></small>
             --
@@ -42,4 +44,5 @@
       <li>Чеки по данной кассе отсутствуют</li>
     {% endfor %}
   </ul>
+{% endlocaltime %}
 {% endblock content %}
